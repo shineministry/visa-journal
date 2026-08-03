@@ -109,23 +109,138 @@
     cursor:pointer;
   }
 
-  main{max-width:760px; margin:0 auto; padding:0 1.5rem;}
+  main{max-width:920px; margin:0 auto; padding:0 1.5rem;}
 
   .entry{
     position:relative; z-index:1;
-    padding:3.2rem 0;
-    border-bottom:1px dashed var(--line);
+    padding:2.2rem 0;
   }
-  .entry:last-of-type{border-bottom:none;}
 
-  .entry-photo{
-    width:100%;
-    max-height:420px;
+  .blog-card{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:0;
+    background:#4b4b4f;
+    color:#f2efe9;
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(28,42,36,.16);
+  }
+  .blog-card.has-photo{grid-template-columns:1.3fr 1fr;}
+  .card-text{padding:2.4rem 2.2rem;}
+  .card-photo{position:relative; min-height:220px;}
+  .card-photo img{
+    width:100%; height:100%;
     object-fit:cover;
-    border-radius:8px;
-    margin-bottom:1.4rem;
-    box-shadow:0 12px 30px rgba(28,42,36,.18);
-    border:1px solid var(--line);
+    display:block;
+  }
+  .blog-card h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.9rem;
+    color:#fff;
+    margin-bottom:.6rem;
+  }
+  .card-date{
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.85rem;
+    color:#d8d4c8;
+    margin-bottom:1.2rem;
+  }
+  .card-excerpt, .card-full p{
+    color:#e6e3da;
+    font-size:1rem;
+    line-height:1.7;
+    margin-bottom:1rem;
+  }
+  .card-full{display:none;}
+  .card-full.open{display:block;}
+  .card-full .callout{
+    background:rgba(255,255,255,.08);
+    border-left:3px solid var(--gold);
+    color:#f2efe9;
+  }
+  .card-full .callout strong{color:#e8c98a;}
+
+  .card-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:.8rem;
+    margin-top:1rem;
+    padding-top:1rem;
+    border-top:1px solid rgba(255,255,255,.15);
+  }
+  .footer-left{display:flex; align-items:center; gap:.7rem; flex-wrap:wrap;}
+  .foot-link{
+    background:none; border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:#e8c98a;
+    cursor:pointer;
+    padding:0;
+  }
+  .foot-sep{color:rgba(255,255,255,.3); font-size:.7rem;}
+  .more-info-btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,.4);
+    color:#fff;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    padding:.5rem 1rem;
+    border-radius:20px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .more-info-btn:hover{background:rgba(255,255,255,.12);}
+
+  .admin-row{
+    display:flex; gap:.9rem; flex-wrap:wrap;
+    margin-top:1rem;
+    padding-top:.8rem;
+    border-top:1px dashed rgba(255,255,255,.15);
+  }
+  .draft-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.65rem;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--stamp);
+    padding:.2rem .5rem;
+    border-radius:2px;
+    margin-bottom:.8rem;
+  }
+
+  .comment-box{margin-top:1rem;}
+  .comment-box textarea{
+    width:100%;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.9rem;
+    padding:.6rem .7rem;
+    border-radius:4px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    resize:vertical;
+  }
+  .comment-list{margin-top:.8rem; font-size:.9rem;}
+  .comment-item{
+    padding:.6rem 0;
+    border-top:1px solid rgba(255,255,255,.12);
+    color:#e6e3da;
+  }
+
+  @media (max-width:700px){
+    .blog-card.has-photo{grid-template-columns:1fr;}
+    .card-photo{min-height:200px; order:-1;}
+    .card-text{padding:1.6rem 1.4rem;}
   }
 
   .entry-head{
@@ -137,12 +252,14 @@
     font-size:.7rem;
     letter-spacing:.2em;
     text-transform:uppercase;
-    color:var(--seal);
-    background:rgba(47,94,76,0.09);
+    color:#e8c98a;
+    background:rgba(255,255,255,.1);
     padding:.3rem .6rem;
     border-radius:3px;
   }
   .daytag{
+    display:none;
+  }
     font-family:'IBM Plex Mono', monospace;
     font-size:.75rem;
     color:#8a8368;
@@ -315,6 +432,19 @@
     background:var(--seal);
     border-color:var(--seal);
     color:var(--paper);
+  }
+  .section-tab.share-tab{
+    background:var(--paper);
+    border-style:dashed;
+  }
+
+  @keyframes highlightPulse{
+    0%{ background:rgba(169,129,47,.25); }
+    100%{ background:transparent; }
+  }
+  .entry.highlight{
+    animation:highlightPulse 2.2s ease-out;
+    border-radius:8px;
   }
 
   .sections-list{margin-bottom:1.2rem;}
@@ -797,13 +927,44 @@
     const nav = document.getElementById('sectionNav');
     nav.innerHTML = sections.map(s => `
       <button class="section-tab ${s.id === activeSection ? 'active' : ''}" onclick="switchSection('${s.id}')">${escapeHtml(s.name)}</button>
-    `).join('');
+    `).join('') + `<button class="section-tab share-tab" onclick="shareSectionLink('${activeSection}')" title="Copy a link to this section">🔗</button>`;
   }
 
-  function switchSection(id){
+  function switchSection(id, skipUrl){
     activeSection = id;
     renderNav();
     render();
+    if(!skipUrl){
+      const url = new URL(window.location.href);
+      url.searchParams.set('section', id);
+      url.hash = '';
+      history.pushState({}, '', url);
+    }
+  }
+
+  function shareSectionLink(id){
+    const url = new URL(window.location.href);
+    url.searchParams.set('section', id);
+    url.hash = '';
+    copyToClipboard(url.toString(), 'Section link copied — anyone can open it straight to this chapter list.');
+  }
+
+  function shareEntry(sectionId, entryId){
+    const url = new URL(window.location.href);
+    url.searchParams.set('section', sectionId);
+    url.hash = 'entry-' + entryId;
+    copyToClipboard(url.toString(), 'Chapter link copied — it opens straight to this entry.');
+  }
+
+  function copyToClipboard(text, successMsg){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        () => setStatus(successMsg, 'ok'),
+        () => prompt('Copy this link:', text)
+      );
+    } else {
+      prompt('Copy this link:', text);
+    }
   }
 
   function render(){
@@ -825,14 +986,16 @@
     empty.style.display = 'none';
 
     entries.forEach(entry => {
-      const section = document.createElement('section');
-      section.className = 'entry';
+      const sectionEl = document.createElement('section');
+      sectionEl.className = 'entry';
       const draftTag = entry.status === 'draft' ? '<span class="draft-tag">Draft</span>' : '';
+      const shareControl = `<button class="edit-link" onclick="shareEntry('${entry.section}','${entry.id}')">🔗 Share</button>`;
       const adminControls = isAdmin ? `
             <button class="edit-link" onclick="openEditor('${entry.id}')">Edit</button>
             <button class="edit-link" onclick="togglePublish('${entry.id}')">${entry.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
             <button class="edit-link danger" onclick="quickDelete('${entry.id}')">Delete</button>` : '';
-      section.innerHTML = `
+      sectionEl.id = 'entry-' + entry.id;
+      sectionEl.innerHTML = `
         ${entry.photo ? `<img class="entry-photo" src="${escapeHtml(entry.photo)}" alt="${escapeHtml(entry.title)}" onerror="this.style.display='none'">` : ''}
         <div class="entry-head">
           <div class="entry-tags">
@@ -840,13 +1003,13 @@
             <span class="daytag">${escapeHtml(entry.day)}</span>
             ${draftTag}
           </div>
-          <div class="entry-controls">${adminControls}</div>
+          <div class="entry-controls">${shareControl}${adminControls}</div>
         </div>
         <h2>${escapeHtml(entry.title)}</h2>
         <p>${escapeHtml(entry.body)}</p>
         ${entry.callout ? `<div class="callout">${escapeHtml(entry.callout)}</div>` : ''}
       `;
-      container.appendChild(section);
+      container.appendChild(sectionEl);
     });
   }
 
@@ -1058,6 +1221,11 @@
   // then fall back to whatever is cached locally.
   (async function init(){
     applyCoverPhoto();
+
+    const initialParams = new URLSearchParams(window.location.search);
+    const requestedSection = initialParams.get('section');
+    if(requestedSection){ activeSection = requestedSection; }
+
     render();
     const remote = await fetchFromGitHub();
     if(remote){
@@ -1074,7 +1242,24 @@
       }
       render();
     }
+
+    // Deep link to a specific entry via #entry-<id>
+    if(window.location.hash.startsWith('#entry-')){
+      const target = document.getElementById(window.location.hash.slice(1));
+      if(target){
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.add('highlight');
+          setTimeout(() => target.classList.remove('highlight'), 2200);
+        }, 300);
+      }
+    }
   })();
+
+  window.addEventListener('popstate', () => {
+    const p = new URLSearchParams(window.location.search);
+    switchSection(p.get('section') || (loadSections()[0] || {}).id, true);
+  });
 </script>
 </body>
 </html>
