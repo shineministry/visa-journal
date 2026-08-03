@@ -1002,9 +1002,8 @@
   // --- Admin mode ---
 
   const params = new URLSearchParams(window.location.search);
-  const isAdmin = params.get('edit') === '1' || localStorage.getItem('visaJournalAdmin') === '1';
-  if(params.get('edit') === '1') localStorage.setItem('visaJournalAdmin', '1');
-  if(params.get('edit') === '0'){ localStorage.removeItem('visaJournalAdmin'); }
+  const isAdmin = params.get('edit') === '1';
+  try{ localStorage.removeItem('visaJournalAdmin'); }catch(e){} // clear old persistent-admin flag, if any
 
   function renderNav(){
     const sections = loadSections();
