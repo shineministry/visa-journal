@@ -271,6 +271,10 @@
     margin:.3rem 0 1rem;
   }
   p{margin-bottom:1rem; color:#2b3630;}
+  .story-body p{margin-bottom:1.1rem; color:#2b3630;}
+  .story-body p:last-child{margin-bottom:0;}
+  .story-body strong{font-weight:700; color:#1c2a24;}
+  .story-body em{font-style:italic;}
   .callout{
     background:var(--paper-2);
     border-left:3px solid var(--gold);
@@ -279,7 +283,10 @@
     color:#4a4530;
     margin:1.2rem 0;
   }
+  .callout p{margin-bottom:.6rem; color:#4a4530;}
+  .callout p:last-child{margin-bottom:0;}
   .callout strong{color:var(--stamp);}
+  .callout em{font-style:italic;}
 
   .checklist{
     list-style:none;
@@ -466,6 +473,19 @@
     color:var(--ink);
   }
   .section-row .edit-link{white-space:nowrap;}
+  .fmt-toolbar{display:flex; gap:.4rem; margin-bottom:.4rem;}
+  .fmt-btn{
+    width:28px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:4px;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.85rem;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .fmt-btn:hover{background:var(--paper-2);}
   .add-section-row{
     display:flex;
     gap:.6rem;
@@ -655,10 +675,19 @@
         <option value="published">Published — visible to everyone</option>
       </select>
     </label>
-    <label>Story
+    <label>Story <span class="hint">(leave a blank line between paragraphs)</span>
+      <div class="fmt-toolbar">
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','**')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','*')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="insertParagraphBreak('f-body')" title="New paragraph">¶</button>
+      </div>
       <textarea id="f-body" rows="6" placeholder="Write what happened..."></textarea>
     </label>
     <label>Callout note <span class="hint">(optional)</span>
+      <div class="fmt-toolbar">
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','**')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','*')" title="Italic"><i>I</i></button>
+      </div>
       <textarea id="f-callout" rows="2" placeholder="A tip or reality check..."></textarea>
     </label>
     <div class="editor-actions">
@@ -774,10 +803,51 @@
     }catch(e){ console.error('Could not save entries', e); }
   }
 
+  function wrapSelection(fieldId, marker){
+    const field = document.getElementById(fieldId);
+    const start = field.selectionStart;
+    const end = field.selectionEnd;
+    const val = field.value;
+    const selected = val.slice(start, end) || 'text';
+    field.value = val.slice(0, start) + marker + selected + marker + val.slice(end);
+    field.focus();
+    field.selectionStart = start + marker.length;
+    field.selectionEnd = start + marker.length + selected.length;
+  }
+
+  function insertParagraphBreak(fieldId){
+    const field = document.getElementById(fieldId);
+    const start = field.selectionStart;
+    const val = field.value;
+    field.value = val.slice(0, start) + '\n\n' + val.slice(start);
+    field.focus();
+    field.selectionStart = field.selectionEnd = start + 2;
+  }
+
   function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str || '';
     return div.innerHTML;
+  }
+
+  // Turns plain typed text into properly formatted HTML:
+  // - a blank line between lines starts a new paragraph
+  // - a single line break becomes <br> within a paragraph
+  // - **bold** and *italic* markup is rendered
+  function formatBody(str){
+    if(!str) return '';
+    const paragraphs = str.replace(/\r\n/g, '\n').split(/\n\s*\n/);
+    return paragraphs
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => {
+        let escaped = escapeHtml(para);
+        escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/(^|[^*])\*(?!\*)(.+?)\*(?!\*)/g, '$1<em>$2</em>');
+        escaped = escaped.replace(/\n/g, '<br>');
+        return `<p>${escaped}</p>`;
+      })
+      .join('');
   }
 
   function setStatus(msg, kind){
@@ -1006,8 +1076,8 @@
           <div class="entry-controls">${shareControl}${adminControls}</div>
         </div>
         <h2>${escapeHtml(entry.title)}</h2>
-        <p>${escapeHtml(entry.body)}</p>
-        ${entry.callout ? `<div class="callout">${escapeHtml(entry.callout)}</div>` : ''}
+        <div class="story-body">${formatBody(entry.body)}</div>
+        ${entry.callout ? `<div class="callout">${formatBody(entry.callout)}</div>` : ''}
       `;
       container.appendChild(sectionEl);
     });
