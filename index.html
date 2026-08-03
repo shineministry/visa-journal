@@ -568,6 +568,8 @@
     margin-top:.4rem;
     font-family:'Source Sans 3', sans-serif;
     font-size:.95rem;
+    text-transform:none;
+    letter-spacing:normal;
     color:var(--ink);
     background:#fff;
     border:1px solid var(--line);
@@ -710,7 +712,7 @@
       <div class="fmt-toolbar">
         <button type="button" class="fmt-btn" onclick="rteBold('f-body')" title="Bold"><b>B</b></button>
         <button type="button" class="fmt-btn" onclick="rteItalic('f-body')" title="Italic"><i>I</i></button>
-        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-body')" title="Insert link">🔗 Link</button>
+        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-body')" title="Insert link">🔗</button>
       </div>
       <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
     </label>
@@ -718,7 +720,7 @@
       <div class="fmt-toolbar">
         <button type="button" class="fmt-btn" onclick="rteBold('f-callout')" title="Bold"><b>B</b></button>
         <button type="button" class="fmt-btn" onclick="rteItalic('f-callout')" title="Italic"><i>I</i></button>
-        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-callout')" title="Insert link">🔗 Link</button>
+        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-callout')" title="Insert link">🔗</button>
       </div>
       <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
     </label>
