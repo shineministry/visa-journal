@@ -1,5 +1,14 @@
 [
   {
+    "id": "e1",
+    "status": "published",
+    "stage": "Chapter 01",
+    "day": "Before I applied",
+    "title": "Why a Visa D, and why it felt daunting at first",
+    "body": "Edit this paragraph with your own starting point — what the Visa D is for in your case (study, work, family reunification, etc.), and what made the process feel overwhelming before you understood the steps.",
+    "callout": "Tip: Start a dedicated folder — physical and digital — the day you decide to apply. Every form, receipt, and email goes in it."
+  },
+  {
     "id": "e2",
     "status": "published",
     "stage": "Chapter 02",
