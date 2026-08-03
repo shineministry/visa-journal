@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stamped — My Austrian Visa D Journey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#1c2a24;
+    --paper:#f3efe4;
+    --paper-2:#e9e2d0;
+    --stamp:#8a3b2e;
+    --seal:#2f5e4c;
+    --line:#c9bfa2;
+    --gold:#a9812f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    line-height:1.65;
+  }
+  .texture{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(0,0,0,0.02) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(0,0,0,0.03) 0, transparent 45%);
+  }
+  header{
+    position:relative; z-index:1;
+    padding:5rem 1.5rem 3rem;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    color:var(--stamp);
+    margin-bottom:1.2rem;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    line-height:1.05;
+    max-width:16ch;
+    margin:0 auto .8rem;
+  }
+  .sub{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    color:#5b5546;
+    font-size:1.1rem;
+    max-width:38ch;
+    margin:0 auto;
+  }
+  .stampmark{
+    display:inline-block;
+    margin-top:2rem;
+    border:2px solid var(--stamp);
+    color:var(--stamp);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.15em;
+    padding:.5rem 1rem;
+    transform:rotate(-3deg);
+    border-radius:2px;
+  }
+
+  main{max-width:720px; margin:0 auto; padding:0 1.5rem;}
+
+  .entry{
+    position:relative; z-index:1;
+    padding:3.2rem 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .entry:last-of-type{border-bottom:none;}
+
+  .entry-head{
+    display:flex; align-items:baseline; gap:1rem; margin-bottom:1rem;
+    flex-wrap:wrap;
+  }
+  .stage{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--seal);
+    background:rgba(47,94,76,0.09);
+    padding:.3rem .6rem;
+    border-radius:3px;
+  }
+  .daytag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    color:#8a8368;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.7rem;
+    margin:.3rem 0 1rem;
+  }
+  p{margin-bottom:1rem; color:#2b3630;}
+  .callout{
+    background:var(--paper-2);
+    border-left:3px solid var(--gold);
+    padding:1rem 1.2rem;
+    font-size:.95rem;
+    color:#4a4530;
+    margin:1.2rem 0;
+  }
+  .callout strong{color:var(--stamp);}
+
+  .checklist{
+    list-style:none;
+    margin:1.2rem 0;
+  }
+  .checklist li{
+    padding:.5rem 0 .5rem 1.8rem;
+    position:relative;
+    border-bottom:1px solid var(--line);
+    font-size:.95rem;
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{
+    content:"✓";
+    position:absolute; left:0; top:.5rem;
+    color:var(--seal);
+    font-weight:bold;
+  }
+
+  footer{
+    position:relative; z-index:1;
+    text-align:center;
+    padding:4rem 1.5rem 5rem;
+    color:#5b5546;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    letter-spacing:.05em;
+  }
+  footer .seal{
+    display:inline-block;
+    width:64px; height:64px;
+    border:2px solid var(--seal);
+    border-radius:50%;
+    margin-bottom:1rem;
+    position:relative;
+  }
+  footer .seal::before{
+    content:"✈";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--seal);
+    font-size:1.4rem;
+  }
+
+  @media (max-width:600px){
+    header{padding:3.5rem 1.2rem 2.2rem;}
+    .entry{padding:2.2rem 0;}
+  }
+
+  /* --- buttons --- */
+  .action-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    border:none;
+    border-radius:3px;
+    cursor:pointer;
+    padding:.7rem 1.3rem;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .action-btn:hover{transform:translateY(-1px);}
+  .add-btn{
+    display:inline-block;
+    margin-top:1.6rem;
+    background:var(--seal);
+    color:var(--paper);
+  }
+  .add-btn:hover{opacity:.9;}
+  .header-actions{display:flex; gap:.7rem; justify-content:center; margin-top:1.6rem; flex-wrap:wrap;}
+  .header-actions .add-btn{margin-top:0;}
+  .settings-btn{background:var(--paper-2); color:var(--ink); border:1px solid var(--line);}
+  .sync-status{
+    margin-top:.9rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.06em;
+    color:#8a8368;
+    min-height:1em;
+  }
+  .sync-status.error{color:var(--stamp);}
+  .sync-status.ok{color:var(--seal);}
+  .settings-note{
+    font-size:.85rem;
+    color:#5b5546;
+    margin-bottom:1.2rem;
+    line-height:1.5;
+  }
+  .edit-link{
+    background:none;
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    cursor:pointer;
+    padding:.2rem 0;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .entry-head{justify-content:space-between;}
+  .entry-tags{display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap;}
+  .entry-controls{display:flex; gap:.9rem;}
+  .draft-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.65rem;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--stamp);
+    padding:.2rem .5rem;
+    border-radius:2px;
+  }
+
+  .empty-state{
+    text-align:center;
+    padding:4rem 1rem;
+    color:#8a8368;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+  }
+
+  /* --- overlay/editor --- */
+  .overlay{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(28,42,36,0.55);
+    z-index:10;
+    align-items:flex-start;
+    justify-content:center;
+    padding:4vh 1rem;
+    overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .editor{
+    background:var(--paper);
+    max-width:560px;
+    width:100%;
+    border-radius:6px;
+    padding:1.8rem;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    border:1px solid var(--line);
+  }
+  .editor-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.3rem;
+    margin-bottom:1.4rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:.8rem;
+  }
+  .close-btn{
+    background:none; border:none; font-size:1.5rem; cursor:pointer; color:#8a8368; line-height:1;
+  }
+  .editor label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#5b5546;
+    margin-bottom:1rem;
+  }
+  .editor .hint{text-transform:none; letter-spacing:0; color:#a39c81;}
+  .editor input, .editor textarea, .editor select{
+    display:block;
+    width:100%;
+    margin-top:.4rem;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.95rem;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:.6rem .7rem;
+    resize:vertical;
+  }
+  .editor input:focus, .editor textarea:focus, .editor select:focus{
+    outline:2px solid var(--seal);
+    outline-offset:1px;
+  }
+  .editor-actions{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-top:.6rem;
+  }
+  .save-btn{background:var(--seal); color:var(--paper);}
+  .cancel-btn{background:var(--paper-2); color:var(--ink);}
+  .delete-btn{background:transparent; color:var(--stamp); border:1px solid var(--stamp);}
+  .delete-btn[hidden]{display:none;}
+</style>
+</head>
+<body>
+<div class="texture"></div>
+
+<header>
+  <div class="eyebrow">Visa Journal · Entry No. 001</div>
+  <h1>Stamped: My Austrian Visa D Journey</h1>
+  <p class="sub">A field log of paperwork, patience, and the moment the envelope finally arrived.</p>
+  <div class="stampmark">PROCESSED · SALZBURG</div>
+  <div class="header-actions">
+    <button id="addBtn" class="action-btn add-btn" onclick="openEditor()">+ Add Experience</button>
+    <button id="settingsBtn" class="action-btn settings-btn" onclick="openSettings()">⚙ Publishing Setup</button>
+  </div>
+  <p id="syncStatus" class="sync-status"></p>
+</header>
+
+<main>
+  <div id="entries"></div>
+  <p id="emptyState" class="empty-state" style="display:none;">No entries yet. Click "+ Add Experience" to write your first one.</p>
+</main>
+
+<div id="settingsOverlay" class="overlay">
+  <div class="editor">
+    <div class="editor-head">
+      <span>Publishing Setup</span>
+      <button class="close-btn" onclick="closeSettings()">&times;</button>
+    </div>
+    <p class="settings-note">Entries you publish are saved to a JSON file in a GitHub repo, so anyone visiting this page — on any device — sees them. This info stays only in your browser, never in the page itself.</p>
+    <label>GitHub username / org
+      <input type="text" id="cfg-owner" placeholder="e.g. shinumaths989">
+    </label>
+    <label>Repository name
+      <input type="text" id="cfg-repo" placeholder="e.g. visa-journal">
+    </label>
+    <label>Branch
+      <input type="text" id="cfg-branch" placeholder="main">
+    </label>
+    <label>File path <span class="hint">(a JSON file in that repo)</span>
+      <input type="text" id="cfg-path" placeholder="entries.json">
+    </label>
+    <label>Personal access token <span class="hint">(fine-grained, Contents: Read & write, this repo only)</span>
+      <input type="password" id="cfg-token" placeholder="github_pat_...">
+    </label>
+    <div class="editor-actions">
+      <button class="action-btn delete-btn" onclick="clearSettings()">Disconnect</button>
+      <div style="flex:1"></div>
+      <button class="action-btn cancel-btn" onclick="closeSettings()">Cancel</button>
+      <button class="action-btn save-btn" onclick="saveSettings()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<div id="overlay" class="overlay">
+  <div class="editor">
+    <div class="editor-head">
+      <span id="editorTitle">New Entry</span>
+      <button class="close-btn" onclick="closeEditor()">&times;</button>
+    </div>
+    <label>Stage label <span class="hint">(e.g. Chapter 01)</span>
+      <input type="text" id="f-stage" placeholder="Chapter 01">
+    </label>
+    <label>Day tag <span class="hint">(e.g. Before I applied)</span>
+      <input type="text" id="f-day" placeholder="Before I applied">
+    </label>
+    <label>Title
+      <input type="text" id="f-title" placeholder="Why a Visa D, and why it felt daunting">
+    </label>
+    <label>Status
+      <select id="f-status">
+        <option value="draft">Draft — only visible to you</option>
+        <option value="published">Published — visible to everyone</option>
+      </select>
+    </label>
+    <label>Story
+      <textarea id="f-body" rows="6" placeholder="Write what happened..."></textarea>
+    </label>
+    <label>Callout note <span class="hint">(optional)</span>
+      <textarea id="f-callout" rows="2" placeholder="A tip or reality check..."></textarea>
+    </label>
+    <div class="editor-actions">
+      <button class="action-btn delete-btn" id="deleteBtn" onclick="deleteEntry()">Delete</button>
+      <div style="flex:1"></div>
+      <button class="action-btn cancel-btn" onclick="closeEditor()">Cancel</button>
+      <button class="action-btn save-btn" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="seal"></div>
+  <div>Written from Salzburg, Austria</div>
+</footer>
+
+<script>
+  const STORAGE_KEY = 'visaJournalEntries';
+  const CONFIG_KEY = 'visaJournalGitHubConfig';
+  let editingId = null;
+  let currentSha = null; // tracks the GitHub file's current sha, needed to overwrite it
+
+  const defaultEntries = [
+    { id: 'e1', status: 'published', stage: 'Chapter 01', day: 'Before I applied', title: 'Why a Visa D, and why it felt daunting at first', body: 'Edit this paragraph with your own starting point — what the Visa D is for in your case (study, work, family reunification, etc.), and what made the process feel overwhelming before you understood the steps.', callout: 'Tip: Start a dedicated folder — physical and digital — the day you decide to apply. Every form, receipt, and email goes in it.' },
+    { id: 'e2', status: 'published', stage: 'Chapter 02', day: 'Gathering documents', title: 'The paper trail', body: 'Describe what documents you needed to collect — proof of accommodation, financial means, insurance, enrollment or employment letters, and so on. Mention anything that was harder to obtain than expected.', callout: '' },
+    { id: 'e3', status: 'published', stage: 'Chapter 03', day: 'The appointment', title: 'At the embassy or consulate', body: 'Walk through what the appointment itself was like — booking it, wait times, what the officer asked, how long it took, and how you felt walking out.', callout: '' },
+    { id: 'e4', status: 'published', stage: 'Chapter 04', day: 'The wait', title: 'Processing time, and how I stayed sane', body: 'Talk about how many weeks it took, any status checks you did, and advice for others waiting on their own decision.', callout: 'Reality check: Processing times vary case by case — plan your travel dates with buffer room, never book non-refundable flights before approval.' },
+    { id: 'e5', status: 'draft', stage: 'Chapter 05', day: 'The result', title: 'Opening the envelope', body: 'Close with how you found out you were approved (or the outcome), and what came next — picking up the passport, planning the move, first days in Austria.', callout: '' }
+  ];
+
+  function getConfig(){
+    try{
+      const raw = localStorage.getItem(CONFIG_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  function isConnected(){
+    const c = getConfig();
+    return !!(c && c.owner && c.repo && c.path && c.token);
+  }
+
+  function loadEntries(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){ console.error('Could not read saved entries', e); }
+    return defaultEntries.slice();
+  }
+
+  function saveEntriesLocal(entries){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }catch(e){ console.error('Could not save entries', e); }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function setStatus(msg, kind){
+    const el = document.getElementById('syncStatus');
+    el.textContent = msg;
+    el.className = 'sync-status' + (kind ? ' ' + kind : '');
+  }
+
+  // --- GitHub sync ---
+
+  async function fetchFromGitHub(){
+    const cfg = getConfig();
+    if(!cfg || !cfg.owner || !cfg.repo || !cfg.path) return null;
+    const branch = cfg.branch || 'main';
+    try{
+      const url = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${cfg.path}?t=${Date.now()}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if(!res.ok) return null;
+      const data = await res.json();
+      return Array.isArray(data) ? data : null;
+    }catch(e){
+      console.error('GitHub fetch failed', e);
+      return null;
+    }
+  }
+
+  async function pushToGitHub(entries){
+    const cfg = getConfig();
+    if(!cfg || !cfg.token) throw new Error('Not connected to GitHub');
+    const branch = cfg.branch || 'main';
+    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+
+    // Only entries with status "published" go public
+    const publishable = entries.filter(e => e.status === 'published');
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(publishable, null, 2))));
+
+    // Get current sha (needed to update an existing file)
+    let sha = currentSha;
+    if(!sha){
+      try{
+        const shaRes = await fetch(`${apiUrl}?ref=${branch}`, {
+          headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json' }
+        });
+        if(shaRes.ok){
+          const shaData = await shaRes.json();
+          sha = shaData.sha;
+        }
+      }catch(e){ /* file may not exist yet */ }
+    }
+
+    const body = {
+      message: 'Update visa journal entries',
+      content,
+      branch
+    };
+    if(sha) body.sha = sha;
+
+    const res = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${cfg.token}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(!res.ok){
+      const errText = await res.text();
+      throw new Error(`GitHub rejected the update (${res.status}): ${errText.slice(0,200)}`);
+    }
+    const data = await res.json();
+    currentSha = data.content && data.content.sha ? data.content.sha : null;
+  }
+
+  async function syncEntries(entries){
+    if(!isConnected()){
+      setStatus('Saved on this device only. Connect Publishing Setup to make it public.', '');
+      return;
+    }
+    setStatus('Publishing…', '');
+    try{
+      await pushToGitHub(entries);
+      setStatus('Published — visible to everyone.', 'ok');
+    }catch(e){
+      console.error(e);
+      setStatus('Saved locally, but publishing failed: ' + e.message, 'error');
+    }
+  }
+
+  // --- Settings modal ---
+
+  function openSettings(){
+    const cfg = getConfig() || {};
+    document.getElementById('cfg-owner').value = cfg.owner || '';
+    document.getElementById('cfg-repo').value = cfg.repo || '';
+    document.getElementById('cfg-branch').value = cfg.branch || 'main';
+    document.getElementById('cfg-path').value = cfg.path || 'entries.json';
+    document.getElementById('cfg-token').value = cfg.token || '';
+    document.getElementById('settingsOverlay').classList.add('open');
+  }
+
+  function closeSettings(){
+    document.getElementById('settingsOverlay').classList.remove('open');
+  }
+
+  function saveSettings(){
+    const owner = document.getElementById('cfg-owner').value.trim();
+    const repo = document.getElementById('cfg-repo').value.trim();
+    const branch = document.getElementById('cfg-branch').value.trim() || 'main';
+    const path = document.getElementById('cfg-path').value.trim() || 'entries.json';
+    const token = document.getElementById('cfg-token').value.trim();
+
+    if(!owner || !repo || !token){
+      alert('Please fill in the GitHub username, repository, and access token.');
+      return;
+    }
+    localStorage.setItem(CONFIG_KEY, JSON.stringify({ owner, repo, branch, path, token }));
+    currentSha = null;
+    closeSettings();
+    setStatus('Connected. Publish an entry to sync it.', 'ok');
+  }
+
+  function clearSettings(){
+    if(!confirm('Disconnect from GitHub? Your entries stay on this device, but new changes will no longer publish.')) return;
+    localStorage.removeItem(CONFIG_KEY);
+    currentSha = null;
+    closeSettings();
+    setStatus('Disconnected. Saved on this device only.', '');
+  }
+
+  // --- Admin mode ---
+
+  const params = new URLSearchParams(window.location.search);
+  const isAdmin = params.get('edit') === '1' || localStorage.getItem('visaJournalAdmin') === '1';
+  if(params.get('edit') === '1') localStorage.setItem('visaJournalAdmin', '1');
+  if(params.get('edit') === '0'){ localStorage.removeItem('visaJournalAdmin'); }
+
+  function render(){
+    const allEntries = loadEntries();
+    const entries = isAdmin ? allEntries : allEntries.filter(e => e.status === 'published');
+    const container = document.getElementById('entries');
+    const empty = document.getElementById('emptyState');
+    container.innerHTML = '';
+
+    if(entries.length === 0){
+      empty.style.display = 'block';
+      empty.textContent = isAdmin
+        ? 'No entries yet. Click "+ Add Experience" to write your first one.'
+        : 'No published entries yet — check back soon.';
+      return;
+    }
+    empty.style.display = 'none';
+
+    entries.forEach(entry => {
+      const section = document.createElement('section');
+      section.className = 'entry';
+      const draftTag = entry.status === 'draft' ? '<span class="draft-tag">Draft</span>' : '';
+      const adminControls = isAdmin ? `
+            <button class="edit-link" onclick="openEditor('${entry.id}')">Edit</button>
+            <button class="edit-link" onclick="togglePublish('${entry.id}')">${entry.status === 'draft' ? 'Publish' : 'Unpublish'}</button>` : '';
+      section.innerHTML = `
+        <div class="entry-head">
+          <div class="entry-tags">
+            <span class="stage">${escapeHtml(entry.stage)}</span>
+            <span class="daytag">${escapeHtml(entry.day)}</span>
+            ${draftTag}
+          </div>
+          <div class="entry-controls">${adminControls}</div>
+        </div>
+        <h2>${escapeHtml(entry.title)}</h2>
+        <p>${escapeHtml(entry.body)}</p>
+        ${entry.callout ? `<div class="callout">${escapeHtml(entry.callout)}</div>` : ''}
+      `;
+      container.appendChild(section);
+    });
+  }
+
+  function togglePublish(id){
+    const entries = loadEntries();
+    const entry = entries.find(e => e.id === id);
+    if(entry){
+      entry.status = entry.status === 'draft' ? 'published' : 'draft';
+      saveEntriesLocal(entries);
+      render();
+      syncEntries(entries);
+    }
+  }
+
+  function openEditor(id){
+    editingId = id || null;
+    const overlay = document.getElementById('overlay');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const title = document.getElementById('editorTitle');
+
+    if(editingId){
+      const entries = loadEntries();
+      const entry = entries.find(e => e.id === editingId);
+      title.textContent = 'Edit Entry';
+      deleteBtn.hidden = false;
+      document.getElementById('f-stage').value = entry.stage;
+      document.getElementById('f-day').value = entry.day;
+      document.getElementById('f-title').value = entry.title;
+      document.getElementById('f-body').value = entry.body;
+      document.getElementById('f-callout').value = entry.callout || '';
+      document.getElementById('f-status').value = entry.status || 'draft';
+    } else {
+      title.textContent = 'New Entry';
+      deleteBtn.hidden = true;
+      document.getElementById('f-stage').value = '';
+      document.getElementById('f-day').value = '';
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-body').value = '';
+      document.getElementById('f-callout').value = '';
+      document.getElementById('f-status').value = 'draft';
+    }
+    overlay.classList.add('open');
+  }
+
+  function closeEditor(){
+    document.getElementById('overlay').classList.remove('open');
+    editingId = null;
+  }
+
+  function saveEntry(){
+    const stage = document.getElementById('f-stage').value.trim();
+    const day = document.getElementById('f-day').value.trim();
+    const title = document.getElementById('f-title').value.trim();
+    const body = document.getElementById('f-body').value.trim();
+    const callout = document.getElementById('f-callout').value.trim();
+    const status = document.getElementById('f-status').value;
+
+    if(!title || !body){
+      alert('Please add at least a title and a story before saving.');
+      return;
+    }
+
+    const entries = loadEntries();
+
+    if(editingId){
+      const idx = entries.findIndex(e => e.id === editingId);
+      if(idx > -1){
+        entries[idx] = { ...entries[idx], stage, day, title, body, callout, status };
+      }
+    } else {
+      entries.push({
+        id: 'e' + Date.now(),
+        stage: stage || `Chapter ${String(entries.length + 1).padStart(2,'0')}`,
+        day, title, body, callout, status
+      });
+    }
+
+    saveEntriesLocal(entries);
+    closeEditor();
+    render();
+    syncEntries(entries);
+  }
+
+  function deleteEntry(){
+    if(!editingId) return;
+    if(!confirm('Delete this entry? This cannot be undone.')) return;
+    let entries = loadEntries();
+    entries = entries.filter(e => e.id !== editingId);
+    saveEntriesLocal(entries);
+    closeEditor();
+    render();
+    syncEntries(entries);
+  }
+
+  document.getElementById('overlay').addEventListener('click', (e) => {
+    if(e.target.id === 'overlay') closeEditor();
+  });
+  document.getElementById('settingsOverlay').addEventListener('click', (e) => {
+    if(e.target.id === 'settingsOverlay') closeSettings();
+  });
+
+  if(!isAdmin){
+    document.getElementById('addBtn').style.display = 'none';
+    document.getElementById('settingsBtn').style.display = 'none';
+  }
+
+  // Boot: try to pull the latest published entries from GitHub first,
+  // then fall back to whatever is cached locally.
+  (async function init(){
+    render();
+    const remote = await fetchFromGitHub();
+    if(remote){
+      const local = loadEntries();
+      const drafts = local.filter(e => e.status === 'draft');
+      const merged = [...remote, ...drafts.filter(d => !remote.some(r => r.id === d.id))];
+      saveEntriesLocal(merged);
+      render();
+    }
+  })();
+</script>
+</body>
+</html>
