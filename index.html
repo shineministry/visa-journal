@@ -709,6 +709,11 @@
   const SECTIONS_KEY = 'visaJournalSections';
   const COVER_KEY = 'visaJournalCoverPhoto';
   const CONFIG_KEY = 'visaJournalGitHubConfig';
+
+  // Public read location — hardcoded so EVERY visitor's browser knows where to fetch
+  // published entries from, regardless of whether they've ever opened Publishing Setup.
+  // Only the personal access token (needed to publish) stays in local Settings.
+  const PUBLIC_REPO = { owner: 'shineministry', repo: 'visa-journal', branch: 'main', path: 'entries.json' };
   let editingId = null;
   let currentSha = null; // tracks the GitHub file's current sha, needed to overwrite it
   let activeSection = null;
@@ -859,7 +864,10 @@
   // --- GitHub sync ---
 
   async function fetchFromGitHub(){
-    const cfg = getConfig();
+    // Reads always use the hardcoded public repo location, so every visitor —
+    // even ones who've never opened Publishing Setup on this device — sees
+    // published entries. Local Settings (with the token) is only needed to publish.
+    const cfg = { ...PUBLIC_REPO, ...(getConfig() || {}) };
     if(!cfg || !cfg.owner || !cfg.repo || !cfg.path) return null;
     const branch = cfg.branch || 'main';
     try{
@@ -891,7 +899,7 @@
   }
 
   async function pushToGitHub(entries, sections, cover, _retry){
-    const cfg = getConfig();
+    const cfg = { ...PUBLIC_REPO, ...(getConfig() || {}) };
     if(!cfg || !cfg.token) throw new Error('Not connected to GitHub');
     const branch = cfg.branch || 'main';
     const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
@@ -954,10 +962,10 @@
 
   function openSettings(){
     const cfg = getConfig() || {};
-    document.getElementById('cfg-owner').value = cfg.owner || '';
-    document.getElementById('cfg-repo').value = cfg.repo || '';
-    document.getElementById('cfg-branch').value = cfg.branch || 'main';
-    document.getElementById('cfg-path').value = cfg.path || 'entries.json';
+    document.getElementById('cfg-owner').value = cfg.owner || PUBLIC_REPO.owner;
+    document.getElementById('cfg-repo').value = cfg.repo || PUBLIC_REPO.repo;
+    document.getElementById('cfg-branch').value = cfg.branch || PUBLIC_REPO.branch;
+    document.getElementById('cfg-path').value = cfg.path || PUBLIC_REPO.path;
     document.getElementById('cfg-token').value = cfg.token || '';
     document.getElementById('settingsOverlay').classList.add('open');
   }
