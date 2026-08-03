@@ -562,6 +562,37 @@
     outline:2px solid var(--seal);
     outline-offset:1px;
   }
+  .editor .rte{
+    display:block;
+    width:100%;
+    margin-top:.4rem;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.95rem;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:.6rem .7rem;
+    min-height:7.5rem;
+    overflow-y:auto;
+  }
+  .editor .rte.short{min-height:3.2rem;}
+  .editor .rte:focus{
+    outline:2px solid var(--seal);
+    outline-offset:1px;
+  }
+  .editor .rte p{margin-bottom:.7rem;}
+  .editor .rte p:last-child{margin-bottom:0;}
+  .editor .rte a{color:#1a5fb4;}
+  .editor .rte:empty::before{content:attr(data-placeholder); color:#a39c81;}
+  .fmt-btn.link-btn{font-style:normal; font-family:'IBM Plex Mono', monospace; font-size:.75rem;}
+  .story-body a, .callout a{
+    color:#1a5fb4;
+    text-decoration:underline;
+    text-decoration-color:rgba(26,95,180,.4);
+    word-break:break-word;
+  }
+  .story-body a:hover, .callout a:hover{ text-decoration-color:#1a5fb4; }
   .editor-actions{
     display:flex;
     align-items:center;
@@ -675,20 +706,21 @@
         <option value="published">Published — visible to everyone</option>
       </select>
     </label>
-    <label>Story <span class="hint">(leave a blank line between paragraphs)</span>
+    <label>Story <span class="hint">(press Enter for a new paragraph)</span>
       <div class="fmt-toolbar">
-        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','**')" title="Bold"><b>B</b></button>
-        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','*')" title="Italic"><i>I</i></button>
-        <button type="button" class="fmt-btn" onclick="insertParagraphBreak('f-body')" title="New paragraph">¶</button>
+        <button type="button" class="fmt-btn" onclick="rteBold('f-body')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="rteItalic('f-body')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-body')" title="Insert link">🔗 Link</button>
       </div>
-      <textarea id="f-body" rows="6" placeholder="Write what happened..."></textarea>
+      <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
     </label>
     <label>Callout note <span class="hint">(optional)</span>
       <div class="fmt-toolbar">
-        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','**')" title="Bold"><b>B</b></button>
-        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','*')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="rteBold('f-callout')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="rteItalic('f-callout')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-callout')" title="Insert link">🔗 Link</button>
       </div>
-      <textarea id="f-callout" rows="2" placeholder="A tip or reality check..."></textarea>
+      <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
     </label>
     <div class="editor-actions">
       <button class="action-btn delete-btn" id="deleteBtn" onclick="deleteEntry()">Delete</button>
@@ -808,25 +840,93 @@
     }catch(e){ console.error('Could not save entries', e); }
   }
 
-  function wrapSelection(fieldId, marker){
+  function rteFocusAndRestore(fieldId){
     const field = document.getElementById(fieldId);
-    const start = field.selectionStart;
-    const end = field.selectionEnd;
-    const val = field.value;
-    const selected = val.slice(start, end) || 'text';
-    field.value = val.slice(0, start) + marker + selected + marker + val.slice(end);
     field.focus();
-    field.selectionStart = start + marker.length;
-    field.selectionEnd = start + marker.length + selected.length;
   }
 
-  function insertParagraphBreak(fieldId){
+  function rteBold(fieldId){
+    rteFocusAndRestore(fieldId);
+    document.execCommand('bold');
+  }
+
+  function rteItalic(fieldId){
+    rteFocusAndRestore(fieldId);
+    document.execCommand('italic');
+  }
+
+  function isSafeUrl(url){
+    try{
+      if(url.startsWith('mailto:')) return true;
+      const u = new URL(url, window.location.href);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    }catch(e){ return false; }
+  }
+
+  function rteLink(fieldId){
     const field = document.getElementById(fieldId);
-    const start = field.selectionStart;
-    const val = field.value;
-    field.value = val.slice(0, start) + '\n\n' + val.slice(start);
     field.focus();
-    field.selectionStart = field.selectionEnd = start + 2;
+    const selection = window.getSelection();
+    if(!selection || selection.rangeCount === 0 || selection.isCollapsed){
+      alert('Select some text first, then click Link.');
+      return;
+    }
+    let url = prompt('Link URL (starting with https://):', 'https://');
+    if(!url) return;
+    url = url.trim();
+    if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url)) url = 'https://' + url;
+    if(!isSafeUrl(url)){
+      alert('That link doesn\'t look safe to open — please use a normal https:// link.');
+      return;
+    }
+    document.execCommand('createLink', false, url);
+    // Harden the link(s) just created: open safely in a new tab, styled via CSS.
+    const anchors = field.querySelectorAll('a[href="' + url.replace(/"/g,'\\"') + '"]');
+    anchors.forEach(a => {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    });
+  }
+
+  // Strips everything down to a small safe tag set before saving/rendering,
+  // so pasted content or the browser's own contenteditable output can't
+  // smuggle in scripts, styles, or unsafe links.
+  function sanitizeHtml(html){
+    const allowedTags = { P:1, DIV:1, BR:1, B:1, STRONG:1, I:1, EM:1, A:1 };
+    const container = document.createElement('div');
+    container.innerHTML = html || '';
+
+    function clean(node){
+      [...node.childNodes].forEach(child => {
+        if(child.nodeType === Node.TEXT_NODE) return;
+        if(child.nodeType !== Node.ELEMENT_NODE){ child.remove(); return; }
+        if(!allowedTags[child.tagName]){
+          // Unwrap unknown tags (e.g. span, font) but keep their text/children.
+          while(child.firstChild) child.parentNode.insertBefore(child.firstChild, child);
+          child.remove();
+          return;
+        }
+        if(child.tagName === 'A'){
+          const href = child.getAttribute('href') || '';
+          if(isSafeUrl(href)){
+            child.setAttribute('href', href);
+            child.setAttribute('target', '_blank');
+            child.setAttribute('rel', 'noopener noreferrer');
+          } else {
+            while(child.firstChild) child.parentNode.insertBefore(child.firstChild, child);
+            child.remove();
+            return;
+          }
+        }
+        [...child.attributes].forEach(attr => {
+          if(child.tagName === 'A' && (attr.name === 'href' || attr.name === 'target' || attr.name === 'rel')) return;
+          child.removeAttribute(attr.name);
+        });
+        clean(child);
+      });
+    }
+    clean(container);
+    return container.innerHTML.trim();
   }
 
   function escapeHtml(str){
@@ -835,12 +935,15 @@
     return div.innerHTML;
   }
 
-  // Turns plain typed text into properly formatted HTML:
-  // - a blank line between lines starts a new paragraph
-  // - a single line break becomes <br> within a paragraph
-  // - **bold** and *italic* markup is rendered
+  // Renders stored entry content for display.
+  // New entries are already-sanitized HTML from the rich text editor.
+  // Old entries (saved before this update) are plain text with **/* markdown —
+  // detected by the absence of any HTML tags — and get converted the old way.
   function formatBody(str){
     if(!str) return '';
+    const looksLikeHtml = /<\/?(p|div|br|b|strong|i|em|a)[ >]/i.test(str);
+    if(looksLikeHtml) return sanitizeHtml(str);
+
     const paragraphs = str.replace(/\r\n/g, '\n').split(/\n\s*\n/);
     return paragraphs
       .map(para => para.trim())
@@ -1140,8 +1243,8 @@
       document.getElementById('f-stage').value = entry.stage;
       document.getElementById('f-day').value = entry.day;
       document.getElementById('f-title').value = entry.title;
-      document.getElementById('f-body').value = entry.body;
-      document.getElementById('f-callout').value = entry.callout || '';
+      document.getElementById('f-body').innerHTML = sanitizeHtml(entry.body);
+      document.getElementById('f-callout').innerHTML = sanitizeHtml(entry.callout || '');
       document.getElementById('f-status').value = entry.status || 'draft';
     } else {
       title.textContent = 'New Entry';
@@ -1151,8 +1254,8 @@
       document.getElementById('f-stage').value = '';
       document.getElementById('f-day').value = '';
       document.getElementById('f-title').value = '';
-      document.getElementById('f-body').value = '';
-      document.getElementById('f-callout').value = '';
+      document.getElementById('f-body').innerHTML = '';
+      document.getElementById('f-callout').innerHTML = '';
       document.getElementById('f-status').value = 'draft';
     }
     overlay.classList.add('open');
@@ -1169,11 +1272,11 @@
     const stage = document.getElementById('f-stage').value.trim();
     const day = document.getElementById('f-day').value.trim();
     const title = document.getElementById('f-title').value.trim();
-    const body = document.getElementById('f-body').value.trim();
-    const callout = document.getElementById('f-callout').value.trim();
+    const body = sanitizeHtml(document.getElementById('f-body').innerHTML.trim());
+    const callout = sanitizeHtml(document.getElementById('f-callout').innerHTML.trim());
     const status = document.getElementById('f-status').value;
 
-    if(!title || !body){
+    if(!title || !document.getElementById('f-body').textContent.trim()){
       alert('Please add at least a title and a story before saving.');
       return;
     }
