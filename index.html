@@ -473,7 +473,7 @@
     color:var(--ink);
   }
   .section-row .edit-link{white-space:nowrap;}
-  .fmt-toolbar{display:flex; gap:.4rem; margin-bottom:.4rem;}
+  .fmt-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; margin-bottom:.4rem;}
   .fmt-btn{
     width:28px; height:28px;
     display:flex; align-items:center; justify-content:center;
@@ -588,6 +588,18 @@
   .editor .rte a{color:#1a5fb4;}
   .editor .rte:empty::before{content:attr(data-placeholder); color:#a39c81;}
   .fmt-btn.link-btn{font-style:normal; font-family:'IBM Plex Mono', monospace; font-size:.75rem;}
+  .fmt-sep{width:1px; background:var(--line); margin:0 .1rem;}
+  .fmt-select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+    padding:.3rem .3rem;
+  }
+  .editor .rte u{text-decoration:underline;}
+  .editor .rte ol{padding-left:1.4rem;}
   .story-body a, .callout a{
     color:#1a5fb4;
     text-decoration:underline;
@@ -710,16 +722,40 @@
     </label>
     <label>Story <span class="hint">(press Enter for a new paragraph)</span>
       <div class="fmt-toolbar">
-        <button type="button" class="fmt-btn" onclick="rteBold('f-body')" title="Bold"><b>B</b></button>
-        <button type="button" class="fmt-btn" onclick="rteItalic('f-body')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','bold')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','italic')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','underline')" title="Underline"><u>U</u></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','superscript')" title="Superscript">x²</button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','subscript')" title="Subscript">x₂</button>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','justifyLeft')" title="Align left">⯇</button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','justifyCenter')" title="Align center">☰</button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','justifyRight')" title="Align right">⯈</button>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-body','insertOrderedList')" title="Numbered list">1.</button>
+        <select class="fmt-select" title="Font size" onchange="rteFontSize('f-body', this.value); this.selectedIndex=0;">
+          <option value="">Size</option>
+          <option value="0.8em">Small</option>
+          <option value="1em">Normal</option>
+          <option value="1.25em">Large</option>
+          <option value="1.6em">Huge</option>
+        </select>
+        <select class="fmt-select" title="Change case" onchange="rteChangeCase('f-body', this.value); this.selectedIndex=0;">
+          <option value="">Case</option>
+          <option value="upper">UPPERCASE</option>
+          <option value="lower">lowercase</option>
+          <option value="title">Title Case</option>
+        </select>
         <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-body')" title="Insert link">🔗</button>
+        <button type="button" class="fmt-btn" onclick="openFindReplace('f-body')" title="Find and replace">🔍</button>
       </div>
       <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
     </label>
     <label>Callout note <span class="hint">(optional)</span>
       <div class="fmt-toolbar">
-        <button type="button" class="fmt-btn" onclick="rteBold('f-callout')" title="Bold"><b>B</b></button>
-        <button type="button" class="fmt-btn" onclick="rteItalic('f-callout')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-callout','bold')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-callout','italic')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="rteCmd('f-callout','underline')" title="Underline"><u>U</u></button>
         <button type="button" class="fmt-btn link-btn" onclick="rteLink('f-callout')" title="Insert link">🔗</button>
       </div>
       <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
@@ -729,6 +765,22 @@
       <div style="flex:1"></div>
       <button class="action-btn cancel-btn" onclick="closeEditor()">Cancel</button>
       <button class="action-btn save-btn" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div id="findReplaceOverlay" class="overlay">
+  <div class="editor" style="max-width:26rem;">
+    <h3>Find & Replace</h3>
+    <label>Find <input type="text" id="fr-find" placeholder="text to find"></label>
+    <label>Replace with <input type="text" id="fr-replace" placeholder="replacement text"></label>
+    <label style="display:flex; align-items:center; gap:.5rem;">
+      <input type="checkbox" id="fr-case" style="width:auto; margin-top:0;"> <span style="text-transform:none; font-family:'Source Sans 3',sans-serif; font-size:.85rem; color:var(--ink);">Match case</span>
+    </label>
+    <div class="editor-actions">
+      <div style="flex:1"></div>
+      <button class="action-btn cancel-btn" onclick="closeFindReplace()">Cancel</button>
+      <button class="action-btn save-btn" onclick="runFindReplace()">Replace All</button>
     </div>
   </div>
 </div>
@@ -847,14 +899,91 @@
     field.focus();
   }
 
-  function rteBold(fieldId){
+  // Generic wrapper for simple execCommand-based formatting actions
+  // (bold, italic, underline, superscript, subscript, alignment, lists...).
+  function rteCmd(fieldId, command, value){
     rteFocusAndRestore(fieldId);
-    document.execCommand('bold');
+    document.execCommand(command, false, value);
   }
 
-  function rteItalic(fieldId){
-    rteFocusAndRestore(fieldId);
-    document.execCommand('italic');
+  function rteFontSize(fieldId, size){
+    if(!size) return;
+    const field = document.getElementById(fieldId);
+    field.focus();
+    const selection = window.getSelection();
+    if(!selection || selection.rangeCount === 0 || selection.isCollapsed){
+      alert('Select some text first, then choose a size.');
+      return;
+    }
+    // execCommand('fontSize') only supports a fixed 1-7 scale, so wrap the
+    // selection in a span with an explicit size instead (kept by the sanitizer).
+    const range = selection.getRangeAt(0);
+    const span = document.createElement('span');
+    span.style.fontSize = size;
+    try{
+      range.surroundContents(span);
+    }catch(e){
+      // Selection spans multiple elements — fall back to extract/wrap.
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+    }
+    selection.removeAllRanges();
+  }
+
+  function rteChangeCase(fieldId, mode){
+    if(!mode) return;
+    const field = document.getElementById(fieldId);
+    field.focus();
+    const selection = window.getSelection();
+    if(!selection || selection.rangeCount === 0 || selection.isCollapsed){
+      alert('Select some text first, then choose a case.');
+      return;
+    }
+    const text = selection.toString();
+    let transformed;
+    if(mode === 'upper') transformed = text.toUpperCase();
+    else if(mode === 'lower') transformed = text.toLowerCase();
+    else transformed = text.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+    document.execCommand('insertText', false, transformed);
+  }
+
+  let frFieldId = null;
+
+  function openFindReplace(fieldId){
+    frFieldId = fieldId;
+    document.getElementById('fr-find').value = '';
+    document.getElementById('fr-replace').value = '';
+    document.getElementById('fr-case').checked = false;
+    document.getElementById('findReplaceOverlay').classList.add('open');
+  }
+
+  function closeFindReplace(){
+    document.getElementById('findReplaceOverlay').classList.remove('open');
+    frFieldId = null;
+  }
+
+  // Walks text nodes only (never touches tags/attributes), so formatting
+  // inside the field is preserved while the visible words are swapped.
+  function runFindReplace(){
+    if(!frFieldId) return;
+    const find = document.getElementById('fr-find').value;
+    const replace = document.getElementById('fr-replace').value;
+    const matchCase = document.getElementById('fr-case').checked;
+    if(!find){ closeFindReplace(); return; }
+    const field = document.getElementById(frFieldId);
+    const flags = matchCase ? 'g' : 'gi';
+    let pattern;
+    try{ pattern = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags); }catch(e){ closeFindReplace(); return; }
+    const walker = document.createTreeWalker(field, NodeFilter.SHOW_TEXT, null);
+    let node, count = 0;
+    while((node = walker.nextNode())){
+      if(pattern.test(node.nodeValue)){
+        node.nodeValue = node.nodeValue.replace(pattern, replace);
+        count++;
+      }
+    }
+    closeFindReplace();
+    setStatus(count ? `Replaced in ${count} place(s).` : 'No matches found.', count ? 'ok' : '');
   }
 
   function isSafeUrl(url){
@@ -890,11 +1019,32 @@
     });
   }
 
-  // Strips everything down to a small safe tag set before saving/rendering,
-  // so pasted content or the browser's own contenteditable output can't
-  // smuggle in scripts, styles, or unsafe links.
+  // Only these style properties, with values matching these patterns, survive
+  // sanitizing — enough for font size and alignment, nothing that can be used
+  // to hide content, break layout, or inject unsafe values.
+  const ALLOWED_STYLE = {
+    'font-size': /^\d+(\.\d+)?(em|px|rem)$/,
+    'text-align': /^(left|right|center|justify)$/
+  };
+
+  function sanitizeStyle(styleText){
+    const out = [];
+    (styleText || '').split(';').forEach(decl => {
+      const idx = decl.indexOf(':');
+      if(idx === -1) return;
+      const prop = decl.slice(0, idx).trim().toLowerCase();
+      const val = decl.slice(idx + 1).trim().toLowerCase();
+      const re = ALLOWED_STYLE[prop];
+      if(re && re.test(val)) out.push(`${prop}:${val}`);
+    });
+    return out.join('; ');
+  }
+
+  // Strips everything down to a small safe tag/attribute set before saving
+  // or rendering, so pasted content or the browser's own contenteditable
+  // output can't smuggle in scripts, event handlers, or unsafe links.
   function sanitizeHtml(html){
-    const allowedTags = { P:1, DIV:1, BR:1, B:1, STRONG:1, I:1, EM:1, A:1 };
+    const allowedTags = { P:1, DIV:1, BR:1, B:1, STRONG:1, I:1, EM:1, U:1, SUP:1, SUB:1, A:1, SPAN:1, OL:1, UL:1, LI:1 };
     const container = document.createElement('div');
     container.innerHTML = html || '';
 
@@ -903,7 +1053,7 @@
         if(child.nodeType === Node.TEXT_NODE) return;
         if(child.nodeType !== Node.ELEMENT_NODE){ child.remove(); return; }
         if(!allowedTags[child.tagName]){
-          // Unwrap unknown tags (e.g. span, font) but keep their text/children.
+          // Unwrap unknown tags (e.g. script, font) but keep their text/children.
           while(child.firstChild) child.parentNode.insertBefore(child.firstChild, child);
           child.remove();
           return;
@@ -920,10 +1070,14 @@
             return;
           }
         }
+        const keepStyle = (child.tagName === 'SPAN' || child.tagName === 'P' || child.tagName === 'DIV')
+          ? sanitizeStyle(child.getAttribute('style'))
+          : '';
         [...child.attributes].forEach(attr => {
           if(child.tagName === 'A' && (attr.name === 'href' || attr.name === 'target' || attr.name === 'rel')) return;
           child.removeAttribute(attr.name);
         });
+        if(keepStyle) child.setAttribute('style', keepStyle);
         clean(child);
       });
     }
@@ -937,15 +1091,11 @@
     return div.innerHTML;
   }
 
-  // Renders stored entry content for display.
-  // New entries are already-sanitized HTML from the rich text editor.
-  // Old entries (saved before this update) are plain text with **/* markdown —
-  // detected by the absence of any HTML tags — and get converted the old way.
-  function formatBody(str){
-    if(!str) return '';
-    const looksLikeHtml = /<\/?(p|div|br|b|strong|i|em|a)[ >]/i.test(str);
-    if(looksLikeHtml) return sanitizeHtml(str);
-
+  // Converts legacy plain-text bodies (saved before the rich text editor
+  // existed) into real HTML paragraphs/bold/italic, so they display correctly
+  // both on the public page and when reopened in the editor — instead of
+  // collapsing into one run-on line the way raw newlines do in HTML.
+  function legacyTextToHtml(str){
     const paragraphs = str.replace(/\r\n/g, '\n').split(/\n\s*\n/);
     return paragraphs
       .map(para => para.trim())
@@ -958,6 +1108,20 @@
         return `<p>${escaped}</p>`;
       })
       .join('');
+  }
+
+  function looksLikeHtml(str){
+    return /<\/?(p|div|br|b|strong|i|em|u|sup|sub|a|span|ol|li)[ >]/i.test(str || '');
+  }
+
+  // Renders stored entry content for display.
+  // New entries are already-sanitized HTML from the rich text editor.
+  // Old entries (saved before this update) are plain text with **/* markdown —
+  // detected by the absence of any HTML tags — and get converted the old way.
+  function formatBody(str){
+    if(!str) return '';
+    if(looksLikeHtml(str)) return sanitizeHtml(str);
+    return legacyTextToHtml(str);
   }
 
   function setStatus(msg, kind){
@@ -1245,8 +1409,8 @@
       document.getElementById('f-stage').value = entry.stage;
       document.getElementById('f-day').value = entry.day;
       document.getElementById('f-title').value = entry.title;
-      document.getElementById('f-body').innerHTML = sanitizeHtml(entry.body);
-      document.getElementById('f-callout').innerHTML = sanitizeHtml(entry.callout || '');
+      document.getElementById('f-body').innerHTML = sanitizeHtml(looksLikeHtml(entry.body) ? entry.body : legacyTextToHtml(entry.body));
+      document.getElementById('f-callout').innerHTML = sanitizeHtml(looksLikeHtml(entry.callout || '') ? (entry.callout || '') : legacyTextToHtml(entry.callout || ''));
       document.getElementById('f-status').value = entry.status || 'draft';
     } else {
       title.textContent = 'New Entry';
@@ -1399,6 +1563,9 @@
   });
   document.getElementById('sectionsOverlay').addEventListener('click', (e) => {
     if(e.target.id === 'sectionsOverlay') closeSectionsModal();
+  });
+  document.getElementById('findReplaceOverlay').addEventListener('click', (e) => {
+    if(e.target.id === 'findReplaceOverlay') closeFindReplace();
   });
 
   if(!isAdmin){
