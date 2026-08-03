@@ -511,13 +511,14 @@
     align-items:flex-start;
     justify-content:center;
     padding:4vh 1rem;
-    overflow-y:auto;
   }
   .overlay.open{display:flex;}
   .editor{
     background:var(--paper);
     max-width:560px;
     width:100%;
+    max-height:88vh;
+    overflow-y:auto;
     border-radius:6px;
     padding:1.8rem;
     box-shadow:0 20px 60px rgba(0,0,0,.3);
@@ -576,8 +577,10 @@
     border-radius:4px;
     padding:.6rem .7rem;
     min-height:7.5rem;
+    max-height:16rem;
+    overflow-y:auto;
   }
-  .editor .rte.short{min-height:3.2rem;}
+  .editor .rte.short{min-height:3.2rem; max-height:8rem;}
   .editor .rte:focus{
     outline:2px solid var(--seal);
     outline-offset:1px;
