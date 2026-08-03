@@ -1,38 +1,30 @@
-[
-  {
-    "id": "e1",
-    "status": "published",
-    "stage": "Chapter 01",
-    "day": "Before I applied",
-    "title": "Why a Visa D, and why it felt daunting at first",
-    "body": "Edit this paragraph with your own starting point — what the Visa D is for in your case (study, work, family reunification, etc.), and what made the process feel overwhelming before you understood the steps.",
-    "callout": "Tip: Start a dedicated folder — physical and digital — the day you decide to apply. Every form, receipt, and email goes in it."
-  },
-  {
-    "id": "e2",
-    "status": "published",
-    "stage": "Chapter 02",
-    "day": "Gathering documents",
-    "title": "The paper trail",
-    "body": "Describe what documents you needed to collect — proof of accommodation, financial means, insurance, enrollment or employment letters, and so on. Mention anything that was harder to obtain than expected.",
-    "callout": ""
-  },
-  {
-    "id": "e3",
-    "status": "published",
-    "stage": "Chapter 03",
-    "day": "The appointment",
-    "title": "At the embassy or consulate",
-    "body": "Walk through what the appointment itself was like — booking it, wait times, what the officer asked, how long it took, and how you felt walking out.",
-    "callout": ""
-  },
-  {
-    "id": "e4",
-    "status": "published",
-    "stage": "Chapter 04",
-    "day": "The wait",
-    "title": "Processing time, and how I stayed sane",
-    "body": "Talk about how many weeks it took, any status checks you did, and advice for others waiting on their own decision.",
-    "callout": "Reality check: Processing times vary case by case — plan your travel dates with buffer room, never book non-refundable flights before approval."
-  }
-]
+{
+  "sections": [
+    {
+      "id": "s-visad",
+      "name": "Visa D"
+    },
+    {
+      "id": "s-visac",
+      "name": "Visa C"
+    },
+    {
+      "id": "s-residence",
+      "name": "Residence Permit"
+    }
+  ],
+  "entries": [
+    {
+      "id": "e1785733232090",
+      "section": "s-visad",
+      "photo": "",
+      "stage": "Chapter 01",
+      "day": "How did I started ?",
+      "title": "Why a Visa D ?",
+      "body": "Working abroad is more than obtaining a visa—it's the beginning of a new chapter in life. This series documents my brother's complete journey of applying for an Austrian Visa D as an seasonal worker. From the very first idea of working in Austria to collecting documents, attending appointments, overcoming unexpected challenges, and finally preparing for departure, every step has been recorded.\n\nMy goal is to provide an honest and detailed account of the entire process so that future workers and job-seekers and their families can better understand what to expect. I hope my experience will serve as both a practical guide and a source of encouragement for others who dream of studying in Austria.\n\n**Why Visa D ?**\n\nSee, there are two types of Visa: Visa C and Visa D. Visa C is for those who want to reside in Austria for 90 days. Visa D is for those who want to reside in Austria for 91 days to 180 days. Those who have job/residence for more than 3 months should apply for Visa D (Visum D). In India, Visas C and D can be applied via VFS Global Centre which is found in major cities like Pune, Delhi, Mumbai, etc.\n\n**Click Here:** https://visa.vfsglobal.com/ind/en/aut/\n\n**How to Start?**\n1. Ensure that your passport is ready. If not, please apply for new passport, and if expired, apply for re-issue of passport. \n\n**Click Here**: https://www.passportindia.gov.in/psp\n\nCheck that at least two pages are blank and that passport is not more than 10 years older. When taking Xerox or Blank-and-White copies, it must include bio-data page, previous stamps from other countries (if any), family details, and last two pages. It's also necessary to take copies of old passport and new passport together.",
+      "callout": "**Disclaimer**: *The information and procedures shared in this guide are based on my personal experience and the rules applicable at the time of my application. Schengen visa requirements, Austrian immigration policies, and application procedures may change, so always verify the latest information with the relevant embassy, consulate, or official government sources before applying.*",
+      "status": "published"
+    }
+  ],
+  "cover": ""
+}
