@@ -271,6 +271,10 @@
     margin:.3rem 0 1rem;
   }
   p{margin-bottom:1rem; color:#2b3630;}
+  .story-body p{margin-bottom:1.1rem; color:#2b3630;}
+  .story-body p:last-child{margin-bottom:0;}
+  .story-body strong{font-weight:700; color:#1c2a24;}
+  .story-body em{font-style:italic;}
   .callout{
     background:var(--paper-2);
     border-left:3px solid var(--gold);
@@ -279,7 +283,10 @@
     color:#4a4530;
     margin:1.2rem 0;
   }
+  .callout p{margin-bottom:.6rem; color:#4a4530;}
+  .callout p:last-child{margin-bottom:0;}
   .callout strong{color:var(--stamp);}
+  .callout em{font-style:italic;}
 
   .checklist{
     list-style:none;
@@ -466,6 +473,19 @@
     color:var(--ink);
   }
   .section-row .edit-link{white-space:nowrap;}
+  .fmt-toolbar{display:flex; gap:.4rem; margin-bottom:.4rem;}
+  .fmt-btn{
+    width:28px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:4px;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.85rem;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .fmt-btn:hover{background:var(--paper-2);}
   .add-section-row{
     display:flex;
     gap:.6rem;
@@ -603,7 +623,7 @@
       <span>Publishing Setup</span>
       <button class="close-btn" onclick="closeSettings()">&times;</button>
     </div>
-    <p class="settings-note">All your entries — including drafts — now sync to a JSON file in this GitHub repo, so you (in admin mode) see the same drafts on every device. Public visitors still only ever see entries marked "Published." Note: if the repo is public, the raw JSON file itself is technically fetchable by anyone who knows its URL, so avoid putting anything sensitive in a draft you're not ready to expose. Use a private repo if that matters to you (the page will still work the same way).</p>
+    <p class="settings-note">Entries you publish are saved to a JSON file in a GitHub repo, so anyone visiting this page — on any device — sees them. This info stays only in your browser, never in the page itself.</p>
     <label>GitHub username / org
       <input type="text" id="cfg-owner" placeholder="e.g. shinumaths989">
     </label>
@@ -655,10 +675,19 @@
         <option value="published">Published — visible to everyone</option>
       </select>
     </label>
-    <label>Story
+    <label>Story <span class="hint">(leave a blank line between paragraphs)</span>
+      <div class="fmt-toolbar">
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','**')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-body','*')" title="Italic"><i>I</i></button>
+        <button type="button" class="fmt-btn" onclick="insertParagraphBreak('f-body')" title="New paragraph">¶</button>
+      </div>
       <textarea id="f-body" rows="6" placeholder="Write what happened..."></textarea>
     </label>
     <label>Callout note <span class="hint">(optional)</span>
+      <div class="fmt-toolbar">
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','**')" title="Bold"><b>B</b></button>
+        <button type="button" class="fmt-btn" onclick="wrapSelection('f-callout','*')" title="Italic"><i>I</i></button>
+      </div>
       <textarea id="f-callout" rows="2" placeholder="A tip or reality check..."></textarea>
     </label>
     <div class="editor-actions">
@@ -774,10 +803,51 @@
     }catch(e){ console.error('Could not save entries', e); }
   }
 
+  function wrapSelection(fieldId, marker){
+    const field = document.getElementById(fieldId);
+    const start = field.selectionStart;
+    const end = field.selectionEnd;
+    const val = field.value;
+    const selected = val.slice(start, end) || 'text';
+    field.value = val.slice(0, start) + marker + selected + marker + val.slice(end);
+    field.focus();
+    field.selectionStart = start + marker.length;
+    field.selectionEnd = start + marker.length + selected.length;
+  }
+
+  function insertParagraphBreak(fieldId){
+    const field = document.getElementById(fieldId);
+    const start = field.selectionStart;
+    const val = field.value;
+    field.value = val.slice(0, start) + '\n\n' + val.slice(start);
+    field.focus();
+    field.selectionStart = field.selectionEnd = start + 2;
+  }
+
   function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str || '';
     return div.innerHTML;
+  }
+
+  // Turns plain typed text into properly formatted HTML:
+  // - a blank line between lines starts a new paragraph
+  // - a single line break becomes <br> within a paragraph
+  // - **bold** and *italic* markup is rendered
+  function formatBody(str){
+    if(!str) return '';
+    const paragraphs = str.replace(/\r\n/g, '\n').split(/\n\s*\n/);
+    return paragraphs
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => {
+        let escaped = escapeHtml(para);
+        escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/(^|[^*])\*(?!\*)(.+?)\*(?!\*)/g, '$1<em>$2</em>');
+        escaped = escaped.replace(/\n/g, '<br>');
+        return `<p>${escaped}</p>`;
+      })
+      .join('');
   }
 
   function setStatus(msg, kind){
@@ -806,31 +876,34 @@
     }
   }
 
-  async function pushToGitHub(entries, sections, cover){
+  async function getLatestSha(apiUrl, branch, token){
+    try{
+      const shaRes = await fetch(`${apiUrl}?ref=${branch}&t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+        cache: 'no-store'
+      });
+      if(shaRes.ok){
+        const shaData = await shaRes.json();
+        return shaData.sha;
+      }
+    }catch(e){ /* file may not exist yet */ }
+    return null;
+  }
+
+  async function pushToGitHub(entries, sections, cover, _retry){
     const cfg = getConfig();
     if(!cfg || !cfg.token) throw new Error('Not connected to GitHub');
     const branch = cfg.branch || 'main';
     const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
 
-    // Only entries with status "published" go public
     // Sync everything, including drafts, so admin can see drafts on any device.
     // Public visitors still only see "published" ones — that filtering happens at render time.
     const payload = { sections, entries: entries, cover: cover !== undefined ? cover : loadCoverPhoto() };
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
-    // Get current sha (needed to update an existing file)
-    let sha = currentSha;
-    if(!sha){
-      try{
-        const shaRes = await fetch(`${apiUrl}?ref=${branch}`, {
-          headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json' }
-        });
-        if(shaRes.ok){
-          const shaData = await shaRes.json();
-          sha = shaData.sha;
-        }
-      }catch(e){ /* file may not exist yet */ }
-    }
+    // Always fetch the current sha right before writing — never trust a cached one.
+    // GitHub requires the exact sha of the file as it exists right now, or it rejects with 409.
+    const sha = await getLatestSha(apiUrl, branch, cfg.token);
 
     const body = {
       message: 'Update visa journal entries',
@@ -850,6 +923,11 @@
     });
 
     if(!res.ok){
+      // If it's a conflict and we haven't retried yet, fetch the latest sha again and try once more.
+      // This handles the case where the file changed between our sha fetch and our write.
+      if(res.status === 409 && !_retry){
+        return pushToGitHub(entries, sections, cover, true);
+      }
       const errText = await res.text();
       throw new Error(`GitHub rejected the update (${res.status}): ${errText.slice(0,200)}`);
     }
@@ -1007,8 +1085,8 @@
           <div class="entry-controls">${shareControl}${adminControls}</div>
         </div>
         <h2>${escapeHtml(entry.title)}</h2>
-        <p>${escapeHtml(entry.body)}</p>
-        ${entry.callout ? `<div class="callout">${escapeHtml(entry.callout)}</div>` : ''}
+        <div class="story-body">${formatBody(entry.body)}</div>
+        ${entry.callout ? `<div class="callout">${formatBody(entry.callout)}</div>` : ''}
       `;
       container.appendChild(sectionEl);
     });
@@ -1218,8 +1296,8 @@
     document.getElementById('coverBtn').style.display = 'none';
   }
 
-  // Boot: try to pull the latest entries (including drafts) from GitHub first,
-  // then fall back to whatever is cached locally if offline or not connected.
+  // Boot: try to pull the latest published entries from GitHub first,
+  // then fall back to whatever is cached locally.
   (async function init(){
     applyCoverPhoto();
 
@@ -1230,8 +1308,10 @@
     render();
     const remote = await fetchFromGitHub();
     if(remote){
-      // Remote is now the full source of truth (drafts sync too), so just adopt it directly.
-      saveEntriesLocal(remote.entries);
+      const local = loadEntries();
+      const drafts = local.filter(e => e.status === 'draft');
+      const merged = [...remote.entries, ...drafts.filter(d => !remote.entries.some(r => r.id === d.id))];
+      saveEntriesLocal(merged);
       if(remote.sections && remote.sections.length){
         saveSectionsLocal(remote.sections);
       }
