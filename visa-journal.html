@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stamped — My Austrian Visa D Journey</title>
+<title>Stamped — My Visa & Residency Journeys</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f3efe4' stroke='%232f5e4c' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%238a3b2e' stroke-width='2' stroke-dasharray='3 3'/%3E%3Ctext x='32' y='38' font-family='Georgia,serif' font-size='22' font-weight='bold' fill='%232f5e4c' text-anchor='middle'%3E✈%3C/text%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap');
 
@@ -31,49 +32,84 @@
   }
   header{
     position:relative; z-index:1;
-    padding:5rem 1.5rem 3rem;
+    padding:7rem 1.5rem 4rem;
     text-align:center;
-    border-bottom:1px solid var(--line);
+    overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(20,28,24,.55) 0%, rgba(20,28,24,.72) 60%, var(--paper) 100%),
+      var(--hero-img, linear-gradient(135deg, #24382f, #1c2a24)) center/cover no-repeat;
+    color:var(--paper);
+    min-height:52vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 40px);
+    pointer-events:none;
   }
   .eyebrow{
     font-family:'IBM Plex Mono', monospace;
     font-size:.75rem;
     letter-spacing:.25em;
     text-transform:uppercase;
-    color:var(--stamp);
+    color:#e8c98a;
     margin-bottom:1.2rem;
+    position:relative;
   }
   h1{
     font-family:'Fraunces', serif;
     font-weight:700;
-    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    font-size:clamp(2.4rem, 6vw, 4.4rem);
     line-height:1.05;
-    max-width:16ch;
+    max-width:18ch;
     margin:0 auto .8rem;
+    position:relative;
+    text-shadow:0 4px 24px rgba(0,0,0,.35);
   }
   .sub{
     font-family:'Fraunces', serif;
     font-style:italic;
     font-weight:400;
-    color:#5b5546;
-    font-size:1.1rem;
+    color:#eae4d2;
+    font-size:1.15rem;
     max-width:38ch;
     margin:0 auto;
+    position:relative;
   }
   .stampmark{
     display:inline-block;
     margin-top:2rem;
-    border:2px solid var(--stamp);
-    color:var(--stamp);
+    border:2px solid #e8c98a;
+    color:#e8c98a;
     font-family:'IBM Plex Mono', monospace;
     font-size:.7rem;
     letter-spacing:.15em;
     padding:.5rem 1rem;
     transform:rotate(-3deg);
     border-radius:2px;
+    position:relative;
+  }
+  .cover-btn{
+    position:absolute;
+    top:1.2rem; right:1.2rem;
+    z-index:2;
+    background:rgba(0,0,0,.35);
+    color:#f3efe4;
+    border:1px solid rgba(255,255,255,.4);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.65rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:.5rem .8rem;
+    border-radius:20px;
+    cursor:pointer;
   }
 
-  main{max-width:720px; margin:0 auto; padding:0 1.5rem;}
+  main{max-width:760px; margin:0 auto; padding:0 1.5rem;}
 
   .entry{
     position:relative; z-index:1;
@@ -81,6 +117,16 @@
     border-bottom:1px dashed var(--line);
   }
   .entry:last-of-type{border-bottom:none;}
+
+  .entry-photo{
+    width:100%;
+    max-height:420px;
+    object-fit:cover;
+    border-radius:8px;
+    margin-bottom:1.4rem;
+    box-shadow:0 12px 30px rgba(28,42,36,.18);
+    border:1px solid var(--line);
+  }
 
   .entry-head{
     display:flex; align-items:baseline; gap:1rem; margin-bottom:1rem;
@@ -221,6 +267,7 @@
   .entry-head{justify-content:space-between;}
   .entry-tags{display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap;}
   .entry-controls{display:flex; gap:.9rem;}
+  .edit-link.danger{color:var(--stamp);}
   .draft-tag{
     font-family:'IBM Plex Mono', monospace;
     font-size:.65rem;
@@ -238,6 +285,71 @@
     color:#8a8368;
     font-family:'IBM Plex Mono', monospace;
     font-size:.85rem;
+  }
+
+  .section-nav{
+    position:relative; z-index:1;
+    display:flex;
+    justify-content:center;
+    gap:.5rem;
+    flex-wrap:wrap;
+    padding:1.4rem 1rem;
+    border-bottom:1px solid var(--line);
+    background:var(--paper-2);
+  }
+  .section-tab{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--line);
+    color:#5b5546;
+    padding:.5rem 1rem;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .section-tab:hover{border-color:var(--seal);}
+  .section-tab.active{
+    background:var(--seal);
+    border-color:var(--seal);
+    color:var(--paper);
+  }
+
+  .sections-list{margin-bottom:1.2rem;}
+  .section-row{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    padding:.6rem 0;
+    border-bottom:1px solid var(--line);
+  }
+  .section-row input{
+    flex:1;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.9rem;
+    padding:.4rem .6rem;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .section-row .edit-link{white-space:nowrap;}
+  .add-section-row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.4rem;
+  }
+  .add-section-row input{
+    flex:1;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:.9rem;
+    padding:.6rem .7rem;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:#fff;
+    color:var(--ink);
   }
 
   /* --- overlay/editor --- */
@@ -315,22 +427,45 @@
 <body>
 <div class="texture"></div>
 
-<header>
-  <div class="eyebrow">Visa Journal · Entry No. 001</div>
-  <h1>Stamped: My Austrian Visa D Journey</h1>
-  <p class="sub">A field log of paperwork, patience, and the moment the envelope finally arrived.</p>
+<header id="hero">
+  <button id="coverBtn" class="cover-btn" onclick="openCoverPrompt()">📷 Set Cover Photo</button>
+  <div class="eyebrow">Visa Journal · All Entries</div>
+  <h1>Stamped: My Visa &amp; Residency Journeys</h1>
+  <p class="sub">A field log of paperwork, patience, and the moment each envelope finally arrived — across every visa and permit along the way.</p>
   <div class="stampmark">PROCESSED · SALZBURG</div>
   <div class="header-actions">
     <button id="addBtn" class="action-btn add-btn" onclick="openEditor()">+ Add Experience</button>
     <button id="settingsBtn" class="action-btn settings-btn" onclick="openSettings()">⚙ Publishing Setup</button>
+    <button id="sectionsBtn" class="action-btn settings-btn" onclick="openSectionsModal()">☰ Manage Sections</button>
   </div>
   <p id="syncStatus" class="sync-status"></p>
 </header>
+
+<nav id="sectionNav" class="section-nav"></nav>
 
 <main>
   <div id="entries"></div>
   <p id="emptyState" class="empty-state" style="display:none;">No entries yet. Click "+ Add Experience" to write your first one.</p>
 </main>
+
+<div id="sectionsOverlay" class="overlay">
+  <div class="editor">
+    <div class="editor-head">
+      <span>Manage Sections</span>
+      <button class="close-btn" onclick="closeSectionsModal()">&times;</button>
+    </div>
+    <p class="settings-note">Sections are the tabs in the nav bar (e.g. Visa D, Visa C, Residence Permit). Each entry belongs to one section.</p>
+    <div id="sectionsList" class="sections-list"></div>
+    <div class="add-section-row">
+      <input type="text" id="newSectionName" placeholder="New section name, e.g. Residence Permit">
+      <button class="action-btn save-btn" onclick="addSection()">Add</button>
+    </div>
+    <div class="editor-actions">
+      <div style="flex:1"></div>
+      <button class="action-btn cancel-btn" onclick="closeSectionsModal()">Done</button>
+    </div>
+  </div>
+</div>
 
 <div id="settingsOverlay" class="overlay">
   <div class="editor">
@@ -369,6 +504,12 @@
       <span id="editorTitle">New Entry</span>
       <button class="close-btn" onclick="closeEditor()">&times;</button>
     </div>
+    <label>Section
+      <select id="f-section"></select>
+    </label>
+    <label>Photo URL <span class="hint">(optional — a link to an image)</span>
+      <input type="text" id="f-photo" placeholder="https://...">
+    </label>
     <label>Stage label <span class="hint">(e.g. Chapter 01)</span>
       <input type="text" id="f-stage" placeholder="Chapter 01">
     </label>
@@ -406,17 +547,76 @@
 
 <script>
   const STORAGE_KEY = 'visaJournalEntries';
+  const SECTIONS_KEY = 'visaJournalSections';
+  const COVER_KEY = 'visaJournalCoverPhoto';
   const CONFIG_KEY = 'visaJournalGitHubConfig';
   let editingId = null;
   let currentSha = null; // tracks the GitHub file's current sha, needed to overwrite it
+  let activeSection = null;
+
+  const defaultSections = [
+    { id: 's-visad', name: 'Visa D' },
+    { id: 's-visac', name: 'Visa C' },
+    { id: 's-residence', name: 'Residence Permit' }
+  ];
 
   const defaultEntries = [
-    { id: 'e1', status: 'published', stage: 'Chapter 01', day: 'Before I applied', title: 'Why a Visa D, and why it felt daunting at first', body: 'Edit this paragraph with your own starting point — what the Visa D is for in your case (study, work, family reunification, etc.), and what made the process feel overwhelming before you understood the steps.', callout: 'Tip: Start a dedicated folder — physical and digital — the day you decide to apply. Every form, receipt, and email goes in it.' },
-    { id: 'e2', status: 'published', stage: 'Chapter 02', day: 'Gathering documents', title: 'The paper trail', body: 'Describe what documents you needed to collect — proof of accommodation, financial means, insurance, enrollment or employment letters, and so on. Mention anything that was harder to obtain than expected.', callout: '' },
-    { id: 'e3', status: 'published', stage: 'Chapter 03', day: 'The appointment', title: 'At the embassy or consulate', body: 'Walk through what the appointment itself was like — booking it, wait times, what the officer asked, how long it took, and how you felt walking out.', callout: '' },
-    { id: 'e4', status: 'published', stage: 'Chapter 04', day: 'The wait', title: 'Processing time, and how I stayed sane', body: 'Talk about how many weeks it took, any status checks you did, and advice for others waiting on their own decision.', callout: 'Reality check: Processing times vary case by case — plan your travel dates with buffer room, never book non-refundable flights before approval.' },
-    { id: 'e5', status: 'draft', stage: 'Chapter 05', day: 'The result', title: 'Opening the envelope', body: 'Close with how you found out you were approved (or the outcome), and what came next — picking up the passport, planning the move, first days in Austria.', callout: '' }
+    { id: 'e1', section: 's-visad', status: 'published', stage: 'Chapter 01', day: 'Before I applied', title: 'Why a Visa D, and why it felt daunting at first', body: 'Edit this paragraph with your own starting point — what the Visa D is for in your case (study, work, family reunification, etc.), and what made the process feel overwhelming before you understood the steps.', callout: 'Tip: Start a dedicated folder — physical and digital — the day you decide to apply. Every form, receipt, and email goes in it.' },
+    { id: 'e2', section: 's-visad', status: 'published', stage: 'Chapter 02', day: 'Gathering documents', title: 'The paper trail', body: 'Describe what documents you needed to collect — proof of accommodation, financial means, insurance, enrollment or employment letters, and so on. Mention anything that was harder to obtain than expected.', callout: '' },
+    { id: 'e3', section: 's-visad', status: 'published', stage: 'Chapter 03', day: 'The appointment', title: 'At the embassy or consulate', body: 'Walk through what the appointment itself was like — booking it, wait times, what the officer asked, how long it took, and how you felt walking out.', callout: '' },
+    { id: 'e4', section: 's-visad', status: 'published', stage: 'Chapter 04', day: 'The wait', title: 'Processing time, and how I stayed sane', body: 'Talk about how many weeks it took, any status checks you did, and advice for others waiting on their own decision.', callout: 'Reality check: Processing times vary case by case — plan your travel dates with buffer room, never book non-refundable flights before approval.' },
+    { id: 'e5', section: 's-visad', status: 'draft', stage: 'Chapter 05', day: 'The result', title: 'Opening the envelope', body: 'Close with how you found out you were approved (or the outcome), and what came next — picking up the passport, planning the move, first days in Austria.', callout: '' }
   ];
+
+  function loadCoverPhoto(){
+    try{ return localStorage.getItem(COVER_KEY) || ''; }catch(e){ return ''; }
+  }
+
+  function saveCoverPhotoLocal(url){
+    try{ localStorage.setItem(COVER_KEY, url); }catch(e){}
+  }
+
+  function applyCoverPhoto(){
+    const url = loadCoverPhoto();
+    const hero = document.getElementById('hero');
+    if(url){
+      hero.style.setProperty('--hero-img', `url("${url}")`);
+    } else {
+      hero.style.removeProperty('--hero-img');
+    }
+  }
+
+  function openCoverPrompt(){
+    const current = loadCoverPhoto();
+    const url = prompt('Paste an image URL for the cover photo (leave blank to remove):', current);
+    if(url === null) return;
+    saveCoverPhotoLocal(url.trim());
+    applyCoverPhoto();
+    syncCoverPhoto(url.trim());
+  }
+
+  async function syncCoverPhoto(url){
+    if(!isConnected()) return;
+    try{
+      await pushToGitHub(loadEntries(), loadSections(), url);
+    }catch(e){
+      console.error('Cover photo sync failed', e);
+    }
+  }
+
+  function loadSections(){
+    try{
+      const raw = localStorage.getItem(SECTIONS_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){ console.error('Could not read sections', e); }
+    return defaultSections.slice();
+  }
+
+  function saveSectionsLocal(sections){
+    try{
+      localStorage.setItem(SECTIONS_KEY, JSON.stringify(sections));
+    }catch(e){ console.error('Could not save sections', e); }
+  }
 
   function getConfig(){
     try{
@@ -467,14 +667,16 @@
       const res = await fetch(url, { cache: 'no-store' });
       if(!res.ok) return null;
       const data = await res.json();
-      return Array.isArray(data) ? data : null;
+      if(Array.isArray(data)) return { entries: data, sections: null, cover: null }; // legacy format
+      if(data && Array.isArray(data.entries)) return { entries: data.entries, sections: data.sections || null, cover: data.cover || null };
+      return null;
     }catch(e){
       console.error('GitHub fetch failed', e);
       return null;
     }
   }
 
-  async function pushToGitHub(entries){
+  async function pushToGitHub(entries, sections, cover){
     const cfg = getConfig();
     if(!cfg || !cfg.token) throw new Error('Not connected to GitHub');
     const branch = cfg.branch || 'main';
@@ -482,7 +684,8 @@
 
     // Only entries with status "published" go public
     const publishable = entries.filter(e => e.status === 'published');
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(publishable, null, 2))));
+    const payload = { sections, entries: publishable, cover: cover !== undefined ? cover : loadCoverPhoto() };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
     // Get current sha (needed to update an existing file)
     let sha = currentSha;
@@ -530,7 +733,7 @@
     }
     setStatus('Publishing…', '');
     try{
-      await pushToGitHub(entries);
+      await pushToGitHub(entries, loadSections());
       setStatus('Published — visible to everyone.', 'ok');
     }catch(e){
       console.error(e);
@@ -586,9 +789,28 @@
   if(params.get('edit') === '1') localStorage.setItem('visaJournalAdmin', '1');
   if(params.get('edit') === '0'){ localStorage.removeItem('visaJournalAdmin'); }
 
+  function renderNav(){
+    const sections = loadSections();
+    if(!activeSection || !sections.some(s => s.id === activeSection)){
+      activeSection = sections.length ? sections[0].id : null;
+    }
+    const nav = document.getElementById('sectionNav');
+    nav.innerHTML = sections.map(s => `
+      <button class="section-tab ${s.id === activeSection ? 'active' : ''}" onclick="switchSection('${s.id}')">${escapeHtml(s.name)}</button>
+    `).join('');
+  }
+
+  function switchSection(id){
+    activeSection = id;
+    renderNav();
+    render();
+  }
+
   function render(){
+    renderNav();
     const allEntries = loadEntries();
-    const entries = isAdmin ? allEntries : allEntries.filter(e => e.status === 'published');
+    const bySection = allEntries.filter(e => e.section === activeSection);
+    const entries = isAdmin ? bySection : bySection.filter(e => e.status === 'published');
     const container = document.getElementById('entries');
     const empty = document.getElementById('emptyState');
     container.innerHTML = '';
@@ -596,8 +818,8 @@
     if(entries.length === 0){
       empty.style.display = 'block';
       empty.textContent = isAdmin
-        ? 'No entries yet. Click "+ Add Experience" to write your first one.'
-        : 'No published entries yet — check back soon.';
+        ? 'No entries in this section yet. Click "+ Add Experience" to write one.'
+        : 'No published entries in this section yet — check back soon.';
       return;
     }
     empty.style.display = 'none';
@@ -608,8 +830,10 @@
       const draftTag = entry.status === 'draft' ? '<span class="draft-tag">Draft</span>' : '';
       const adminControls = isAdmin ? `
             <button class="edit-link" onclick="openEditor('${entry.id}')">Edit</button>
-            <button class="edit-link" onclick="togglePublish('${entry.id}')">${entry.status === 'draft' ? 'Publish' : 'Unpublish'}</button>` : '';
+            <button class="edit-link" onclick="togglePublish('${entry.id}')">${entry.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
+            <button class="edit-link danger" onclick="quickDelete('${entry.id}')">Delete</button>` : '';
       section.innerHTML = `
+        ${entry.photo ? `<img class="entry-photo" src="${escapeHtml(entry.photo)}" alt="${escapeHtml(entry.title)}" onerror="this.style.display='none'">` : ''}
         <div class="entry-head">
           <div class="entry-tags">
             <span class="stage">${escapeHtml(entry.stage)}</span>
@@ -637,17 +861,33 @@
     }
   }
 
+  function quickDelete(id){
+    const entries = loadEntries();
+    const entry = entries.find(e => e.id === id);
+    if(!entry) return;
+    if(!confirm(`Delete "${entry.title}"? This cannot be undone.`)) return;
+    const remaining = entries.filter(e => e.id !== id);
+    saveEntriesLocal(remaining);
+    render();
+    syncEntries(remaining);
+  }
+
   function openEditor(id){
     editingId = id || null;
     const overlay = document.getElementById('overlay');
     const deleteBtn = document.getElementById('deleteBtn');
     const title = document.getElementById('editorTitle');
+    const sections = loadSections();
+    const sectionSelect = document.getElementById('f-section');
+    sectionSelect.innerHTML = sections.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
 
     if(editingId){
       const entries = loadEntries();
       const entry = entries.find(e => e.id === editingId);
       title.textContent = 'Edit Entry';
       deleteBtn.hidden = false;
+      sectionSelect.value = entry.section || (sections[0] && sections[0].id) || '';
+      document.getElementById('f-photo').value = entry.photo || '';
       document.getElementById('f-stage').value = entry.stage;
       document.getElementById('f-day').value = entry.day;
       document.getElementById('f-title').value = entry.title;
@@ -657,6 +897,8 @@
     } else {
       title.textContent = 'New Entry';
       deleteBtn.hidden = true;
+      sectionSelect.value = activeSection || (sections[0] && sections[0].id) || '';
+      document.getElementById('f-photo').value = '';
       document.getElementById('f-stage').value = '';
       document.getElementById('f-day').value = '';
       document.getElementById('f-title').value = '';
@@ -673,6 +915,8 @@
   }
 
   function saveEntry(){
+    const section = document.getElementById('f-section').value;
+    const photo = document.getElementById('f-photo').value.trim();
     const stage = document.getElementById('f-stage').value.trim();
     const day = document.getElementById('f-day').value.trim();
     const title = document.getElementById('f-title').value.trim();
@@ -690,12 +934,13 @@
     if(editingId){
       const idx = entries.findIndex(e => e.id === editingId);
       if(idx > -1){
-        entries[idx] = { ...entries[idx], stage, day, title, body, callout, status };
+        entries[idx] = { ...entries[idx], section, photo, stage, day, title, body, callout, status };
       }
     } else {
       entries.push({
         id: 'e' + Date.now(),
-        stage: stage || `Chapter ${String(entries.length + 1).padStart(2,'0')}`,
+        section, photo,
+        stage: stage || `Chapter ${String(entries.filter(e=>e.section===section).length + 1).padStart(2,'0')}`,
         day, title, body, callout, status
       });
     }
@@ -717,28 +962,116 @@
     syncEntries(entries);
   }
 
+  function openSectionsModal(){
+    renderSectionsList();
+    document.getElementById('newSectionName').value = '';
+    document.getElementById('sectionsOverlay').classList.add('open');
+  }
+
+  function closeSectionsModal(){
+    document.getElementById('sectionsOverlay').classList.remove('open');
+    render();
+  }
+
+  function renderSectionsList(){
+    const sections = loadSections();
+    const list = document.getElementById('sectionsList');
+    list.innerHTML = sections.map(s => `
+      <div class="section-row">
+        <input type="text" value="${escapeHtml(s.name)}" onchange="renameSection('${s.id}', this.value)">
+        <button class="edit-link danger" onclick="deleteSection('${s.id}')">Delete</button>
+      </div>
+    `).join('');
+  }
+
+  function addSection(){
+    const input = document.getElementById('newSectionName');
+    const name = input.value.trim();
+    if(!name) return;
+    const sections = loadSections();
+    sections.push({ id: 's-' + Date.now(), name });
+    saveSectionsLocal(sections);
+    input.value = '';
+    renderSectionsList();
+    syncSections(sections);
+  }
+
+  function renameSection(id, newName){
+    newName = newName.trim();
+    if(!newName) { renderSectionsList(); return; }
+    const sections = loadSections();
+    const s = sections.find(x => x.id === id);
+    if(s){
+      s.name = newName;
+      saveSectionsLocal(sections);
+      renderSectionsList();
+      syncSections(sections);
+    }
+  }
+
+  function deleteSection(id){
+    const sections = loadSections();
+    if(sections.length <= 1){
+      alert('You need at least one section.');
+      return;
+    }
+    const entries = loadEntries();
+    const inUse = entries.some(e => e.section === id);
+    if(inUse && !confirm('This section has entries in it. Deleting it will also delete those entries. Continue?')) return;
+
+    const remainingSections = sections.filter(s => s.id !== id);
+    const remainingEntries = entries.filter(e => e.section !== id);
+    saveSectionsLocal(remainingSections);
+    saveEntriesLocal(remainingEntries);
+    renderSectionsList();
+    syncSections(remainingSections);
+    syncEntries(remainingEntries);
+  }
+
+  async function syncSections(sections){
+    if(!isConnected()) return;
+    try{
+      await pushToGitHub(loadEntries(), sections);
+    }catch(e){
+      console.error('Section sync failed', e);
+    }
+  }
+
   document.getElementById('overlay').addEventListener('click', (e) => {
     if(e.target.id === 'overlay') closeEditor();
   });
   document.getElementById('settingsOverlay').addEventListener('click', (e) => {
     if(e.target.id === 'settingsOverlay') closeSettings();
   });
+  document.getElementById('sectionsOverlay').addEventListener('click', (e) => {
+    if(e.target.id === 'sectionsOverlay') closeSectionsModal();
+  });
 
   if(!isAdmin){
     document.getElementById('addBtn').style.display = 'none';
     document.getElementById('settingsBtn').style.display = 'none';
+    document.getElementById('sectionsBtn').style.display = 'none';
+    document.getElementById('coverBtn').style.display = 'none';
   }
 
   // Boot: try to pull the latest published entries from GitHub first,
   // then fall back to whatever is cached locally.
   (async function init(){
+    applyCoverPhoto();
     render();
     const remote = await fetchFromGitHub();
     if(remote){
       const local = loadEntries();
       const drafts = local.filter(e => e.status === 'draft');
-      const merged = [...remote, ...drafts.filter(d => !remote.some(r => r.id === d.id))];
+      const merged = [...remote.entries, ...drafts.filter(d => !remote.entries.some(r => r.id === d.id))];
       saveEntriesLocal(merged);
+      if(remote.sections && remote.sections.length){
+        saveSectionsLocal(remote.sections);
+      }
+      if(remote.cover){
+        saveCoverPhotoLocal(remote.cover);
+        applyCoverPhoto();
+      }
       render();
     }
   })();
