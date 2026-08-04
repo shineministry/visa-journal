@@ -603,7 +603,10 @@
   .fmt-btn:hover{background:#fff; border-color:var(--seal);}
   .fmt-btn.active{background:var(--seal); color:#fff; border-color:var(--seal);}
   .fmt-btn.link-btn{font-style:normal; font-family:'IBM Plex Mono', monospace; font-size:.75rem;}
-  .fmt-select{
+  .fmt-toolbar select.fmt-select{
+    display:inline-block;
+    width:auto;
+    margin-top:0;
     font-family:'IBM Plex Mono', monospace;
     font-size:.7rem;
     border:1px solid var(--line);
@@ -612,6 +615,7 @@
     color:var(--ink);
     padding:.3rem .3rem;
     height:28px;
+    resize:none;
   }
   .story-body a, .callout a{
     color:#1a5fb4;
