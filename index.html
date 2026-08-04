@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stamped — My Visa & Residency Journeys</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f3efe4' stroke='%232f5e4c' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%238a3b2e' stroke-width='2' stroke-dasharray='3 3'/%3E%3Ctext x='32' y='38' font-family='Georgia,serif' font-size='22' font-weight='bold' fill='%232f5e4c' text-anchor='middle'%3E✈%3C/text%3E%3C/svg%3E">
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap');
 
@@ -552,51 +550,45 @@
     outline-offset:1px;
   }
 
-  /* Quill rich text editor, restyled to match the journal's paper theme */
-  .editor .rte-wrap{
+  /* Rich text toolbar + contenteditable field, matching the email composer's proven pattern */
+  .fmt-toolbar{
+    display:flex; flex-wrap:wrap; align-items:center; gap:.3rem;
     margin-top:.4rem;
+    padding:.4rem;
     border:1px solid var(--line);
-    border-radius:4px;
-    overflow:hidden;
-    background:#fff;
-  }
-  .editor .ql-toolbar.ql-snow{
-    border:none;
-    border-bottom:1px solid var(--line);
+    border-bottom:none;
+    border-radius:4px 4px 0 0;
     background:var(--paper-2);
-    font-family:'Source Sans 3', sans-serif;
-    padding:.5rem .5rem;
   }
-  .editor .ql-container.ql-snow{
-    border:none;
+  .fmt-sep{width:1px; height:22px; background:var(--line); margin:0 .2rem;}
+  .editor .rte{
+    display:block;
+    width:100%;
+    margin-top:0;
     font-family:'Source Sans 3', sans-serif;
     font-size:.95rem;
+    text-transform:none;
+    letter-spacing:normal;
     color:var(--ink);
-  }
-  .editor .ql-editor{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:0 0 4px 4px;
+    padding:.6rem .7rem;
     min-height:7.5rem;
     max-height:16rem;
     overflow-y:auto;
-    padding:.7rem .8rem;
   }
-  .editor .ql-editor.ql-blank::before{
-    color:#a39c81;
-    font-style:normal;
-    left:.8rem;
+  .editor .rte.short{min-height:3.2rem; max-height:8rem;}
+  .editor .rte:focus{
+    outline:2px solid var(--seal);
+    outline-offset:-2px;
   }
-  .editor .rte-wrap.short .ql-editor{min-height:3.2rem; max-height:8rem;}
-  .editor .ql-editor p{margin-bottom:.7rem;}
-  .editor .ql-editor p:last-child{margin-bottom:0;}
-  .editor .ql-editor a{color:#1a5fb4;}
-  .editor .ql-snow .ql-picker{color:var(--ink);}
-  .editor .ql-snow .ql-stroke{stroke:var(--ink);}
-  .editor .ql-snow .ql-fill{fill:var(--ink);}
-  .editor .ql-snow button:hover, .editor .ql-snow button.ql-active,
-  .editor .ql-snow .ql-picker-label:hover, .editor .ql-snow .ql-picker-item:hover{
-    color:var(--seal);
-  }
-  .editor .ql-snow button:hover .ql-stroke, .editor .ql-snow button.ql-active .ql-stroke{stroke:var(--seal);}
-  .editor .ql-snow button:hover .ql-fill, .editor .ql-snow button.ql-active .ql-fill{fill:var(--seal);}
+  .editor .rte p{margin-bottom:.7rem;}
+  .editor .rte p:last-child{margin-bottom:0;}
+  .editor .rte a{color:#1a5fb4;}
+  .editor .rte:empty::before{content:attr(data-placeholder); color:#a39c81;}
+  .editor .rte u{text-decoration:underline;}
+  .editor .rte ol{padding-left:1.4rem;}
   .fmt-btn{
     width:28px; height:28px;
     display:flex; align-items:center; justify-content:center;
@@ -608,7 +600,9 @@
     cursor:pointer;
     color:var(--ink);
   }
-  .fmt-btn:hover{background:var(--paper-2);}
+  .fmt-btn:hover{background:#fff; border-color:var(--seal);}
+  .fmt-btn.active{background:var(--seal); color:#fff; border-color:var(--seal);}
+  .fmt-btn.link-btn{font-style:normal; font-family:'IBM Plex Mono', monospace; font-size:.75rem;}
   .fmt-select{
     font-family:'IBM Plex Mono', monospace;
     font-size:.7rem;
@@ -739,52 +733,48 @@
         <option value="published">Published — visible to everyone</option>
       </select>
     </label>
-    <label>Story <span class="hint">(a real formatting toolbar — select text, then click a button)</span>
+    <label>Story <span class="hint">(select text, then click a button)</span>
       <div id="body-toolbar" class="fmt-toolbar">
-        <span class="ql-formats">
-          <button class="ql-bold"></button>
-          <button class="ql-italic"></button>
-          <button class="ql-underline"></button>
-          <button class="ql-script" value="super"></button>
-          <button class="ql-script" value="sub"></button>
-        </span>
-        <span class="ql-formats">
-          <select class="ql-align"></select>
-          <button class="ql-list" value="ordered"></button>
-        </span>
-        <span class="ql-formats">
-          <select class="ql-size">
-            <option value="0.8em">Small</option>
-            <option selected>Normal</option>
-            <option value="1.25em">Large</option>
-            <option value="1.6em">Huge</option>
-          </select>
-          <select class="fmt-select" title="Change case" onchange="quillChangeCase(bodyQuill, this.value); this.selectedIndex=0;">
-            <option value="">Case</option>
-            <option value="upper">UPPERCASE</option>
-            <option value="lower">lowercase</option>
-            <option value="title">Title Case</option>
-          </select>
-        </span>
-        <span class="ql-formats">
-          <button type="button" class="fmt-btn link-btn" onclick="quillLink(bodyQuill)" title="Insert link">🔗</button>
-          <button type="button" class="fmt-btn" onclick="openFindReplace(bodyQuill)" title="Find and replace">🔍</button>
-        </span>
+        <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <button type="button" class="fmt-btn" data-cmd="superscript" title="Superscript">x²</button>
+        <button type="button" class="fmt-btn" data-cmd="subscript" title="Subscript">x₂</button>
+        <div class="fmt-sep"></div>
+        <button type="button" class="fmt-btn" data-cmd="justifyLeft" title="Align left">⯇</button>
+        <button type="button" class="fmt-btn" data-cmd="justifyCenter" title="Align center">☰</button>
+        <button type="button" class="fmt-btn" data-cmd="justifyRight" title="Align right">⯈</button>
+        <div class="fmt-sep"></div>
+        <button type="button" class="fmt-btn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
+        <select class="fmt-select" id="f-body-size" title="Font size">
+          <option value="2">Small</option>
+          <option value="3" selected>Normal</option>
+          <option value="4">Medium</option>
+          <option value="5">Large</option>
+          <option value="6">Huge</option>
+        </select>
+        <select class="fmt-select" id="f-body-case" title="Change case">
+          <option value="">Case</option>
+          <option value="upper">UPPERCASE</option>
+          <option value="lower">lowercase</option>
+          <option value="title">Title Case</option>
+        </select>
+        <div class="fmt-sep"></div>
+        <button type="button" class="fmt-btn" data-cmd="removeFormat" title="Clear formatting">Tx</button>
+        <button type="button" class="fmt-btn link-btn" id="f-body-link" title="Insert link">🔗</button>
+        <button type="button" class="fmt-btn" id="f-body-find" title="Find and replace">🔍</button>
       </div>
-      <div class="rte-wrap"><div id="f-body"></div></div>
+      <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
     </label>
     <label>Callout note <span class="hint">(optional)</span>
       <div id="callout-toolbar" class="fmt-toolbar">
-        <span class="ql-formats">
-          <button class="ql-bold"></button>
-          <button class="ql-italic"></button>
-          <button class="ql-underline"></button>
-        </span>
-        <span class="ql-formats">
-          <button type="button" class="fmt-btn link-btn" onclick="quillLink(calloutQuill)" title="Insert link">🔗</button>
-        </span>
+        <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <div class="fmt-sep"></div>
+        <button type="button" class="fmt-btn link-btn" id="f-callout-link" title="Insert link">🔗</button>
       </div>
-      <div class="rte-wrap short"><div id="f-callout"></div></div>
+      <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
     </label>
     <div class="editor-actions">
       <button class="action-btn delete-btn" id="deleteBtn" onclick="deleteEntry()">Delete</button>
@@ -920,12 +910,6 @@
     }catch(e){ console.error('Could not save entries', e); }
   }
 
-  // Registers a custom font-size format (inline style, not Quill's default
-  // class-based scale) so sizes match what our sanitizer allows.
-  const SizeStyle = Quill.import('attributors/style/size');
-  SizeStyle.whitelist = ['0.8em', '1.25em', '1.6em'];
-  Quill.register(SizeStyle, true);
-
   function isSafeUrl(url){
     try{
       if(url.startsWith('mailto:')) return true;
@@ -934,59 +918,104 @@
     }catch(e){ return false; }
   }
 
-  // Keeps every link in a Quill field safe: correct scheme, opens in a new
-  // tab, and can't reach back into this page (noopener/noreferrer).
-  function hardenLinks(quill){
-    quill.root.querySelectorAll('a').forEach(a => {
-      const href = a.getAttribute('href') || '';
-      if(isSafeUrl(href)){
+  // --- Rich text toolbar, wired the same reliable way as the email composer ---
+  // Buttons stealing focus on mousedown collapses the selection in the field
+  // before our click handler runs, so execCommand ends up with nothing to
+  // act on (this is what caused the "stuck bold" / formatting-on-the-wrong-word
+  // bugs). We (1) stop buttons from taking focus at all, and (2) as a
+  // belt-and-braces fix for controls that MUST take focus (selects), we
+  // continuously track the last real selection inside the field and restore
+  // it right before running the command.
+  function wireRichTextField(fieldId, toolbarId){
+    const field = document.getElementById(fieldId);
+    const toolbarEl = document.getElementById(toolbarId);
+    let savedRange = null;
+
+    function saveSelection(){
+      const sel = window.getSelection();
+      if(sel && sel.rangeCount > 0){
+        const range = sel.getRangeAt(0);
+        if(field.contains(range.commonAncestorContainer)) savedRange = range.cloneRange();
+      }
+    }
+    ['mouseup', 'keyup', 'touchend'].forEach(evt => field.addEventListener(evt, saveSelection));
+    document.addEventListener('selectionchange', () => {
+      const sel = window.getSelection();
+      if(sel && sel.rangeCount > 0 && field.contains(sel.getRangeAt(0).commonAncestorContainer)) saveSelection();
+    });
+    function restoreSelection(){
+      field.focus();
+      if(savedRange){
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
+      }
+    }
+
+    // Prevent plain toolbar buttons from ever taking focus, so the selection
+    // in the field is never lost in the first place.
+    toolbarEl.addEventListener('mousedown', (e) => {
+      if(e.target.closest('button')) e.preventDefault();
+    });
+    toolbarEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-cmd]');
+      if(!btn) return;
+      e.preventDefault();
+      restoreSelection();
+      document.execCommand(btn.dataset.cmd, false, null);
+    });
+
+    const sizeSel = document.getElementById(fieldId + '-size');
+    if(sizeSel) sizeSel.addEventListener('change', (e) => {
+      restoreSelection();
+      document.execCommand('fontSize', false, e.target.value);
+    });
+
+    const caseSel = document.getElementById(fieldId + '-case');
+    if(caseSel) caseSel.addEventListener('change', (e) => {
+      const mode = e.target.value;
+      e.target.selectedIndex = 0;
+      if(!mode) return;
+      restoreSelection();
+      const sel = window.getSelection();
+      if(!sel || sel.isCollapsed){ alert('Select some text first, then choose a case.'); return; }
+      const text = sel.toString();
+      let transformed;
+      if(mode === 'upper') transformed = text.toUpperCase();
+      else if(mode === 'lower') transformed = text.toLowerCase();
+      else transformed = text.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+      document.execCommand('insertText', false, transformed);
+    });
+
+    const linkBtn = document.getElementById(fieldId + '-link');
+    if(linkBtn) linkBtn.addEventListener('click', () => {
+      restoreSelection();
+      const sel = window.getSelection();
+      if(!sel || sel.isCollapsed){ alert('Select some text first, then click Link.'); return; }
+      let url = prompt('Link URL (starting with https://):', 'https://');
+      if(!url) return;
+      url = url.trim();
+      if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url)) url = 'https://' + url;
+      if(!isSafeUrl(url)){
+        alert('That link doesn\'t look safe to open — please use a normal https:// link.');
+        return;
+      }
+      restoreSelection();
+      document.execCommand('createLink', false, url);
+      field.querySelectorAll('a[href="' + url.replace(/"/g, '\\"') + '"]').forEach(a => {
         a.setAttribute('target', '_blank');
         a.setAttribute('rel', 'noopener noreferrer');
-      } else {
-        a.removeAttribute('href');
-      }
+      });
     });
+
+    const findBtn = document.getElementById(fieldId + '-find');
+    if(findBtn) findBtn.addEventListener('click', () => openFindReplace(field));
   }
 
-  function quillLink(quill){
-    const range = quill.getSelection();
-    if(!range || range.length === 0){
-      alert('Select some text first, then click Link.');
-      return;
-    }
-    let url = prompt('Link URL (starting with https://):', 'https://');
-    if(!url) return;
-    url = url.trim();
-    if(!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url)) url = 'https://' + url;
-    if(!isSafeUrl(url)){
-      alert('That link doesn\'t look safe to open — please use a normal https:// link.');
-      return;
-    }
-    quill.format('link', url);
-    hardenLinks(quill);
-  }
+  let frField = null;
 
-  function quillChangeCase(quill, mode){
-    if(!mode) return;
-    const range = quill.getSelection();
-    if(!range || range.length === 0){
-      alert('Select some text first, then choose a case.');
-      return;
-    }
-    const text = quill.getText(range.index, range.length);
-    let transformed;
-    if(mode === 'upper') transformed = text.toUpperCase();
-    else if(mode === 'lower') transformed = text.toLowerCase();
-    else transformed = text.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
-    quill.deleteText(range.index, range.length);
-    quill.insertText(range.index, transformed);
-    quill.setSelection(range.index, transformed.length);
-  }
-
-  let frQuill = null;
-
-  function openFindReplace(quill){
-    frQuill = quill;
+  function openFindReplace(field){
+    frField = field;
     document.getElementById('fr-find').value = '';
     document.getElementById('fr-replace').value = '';
     document.getElementById('fr-case').checked = false;
@@ -995,22 +1024,21 @@
 
   function closeFindReplace(){
     document.getElementById('findReplaceOverlay').classList.remove('open');
-    frQuill = null;
+    frField = null;
   }
 
   // Walks text nodes only (never touches tags/attributes), so formatting
   // inside the field is preserved while the visible words are swapped.
   function runFindReplace(){
-    if(!frQuill) return;
+    if(!frField) return;
     const find = document.getElementById('fr-find').value;
     const replace = document.getElementById('fr-replace').value;
     const matchCase = document.getElementById('fr-case').checked;
     if(!find){ closeFindReplace(); return; }
-    const field = frQuill.root;
     const flags = matchCase ? 'g' : 'gi';
     let pattern;
     try{ pattern = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags); }catch(e){ closeFindReplace(); return; }
-    const walker = document.createTreeWalker(field, NodeFilter.SHOW_TEXT, null);
+    const walker = document.createTreeWalker(frField, NodeFilter.SHOW_TEXT, null);
     let node, count = 0;
     while((node = walker.nextNode())){
       if(pattern.test(node.nodeValue)){
@@ -1026,9 +1054,17 @@
   // sanitizing — enough for font size and alignment, nothing that can be used
   // to hide content, break layout, or inject unsafe values.
   const ALLOWED_STYLE = {
-    'font-size': /^\d+(\.\d+)?(em|px|rem)$/,
+    'font-size': /^\d+(\.\d+)?(em|px|rem|pt)$/,
     'text-align': /^(left|right|center|justify)$/
   };
+
+  // execCommand('fontSize') writes legacy <font size="1-7"> tags — map those
+  // to real CSS so the sanitizer (which doesn't allow <font>) can convert
+  // them to a safe inline style instead of stripping the sizing entirely.
+  function mapLegacyFontSize(n){
+    const map = { '1':'0.65em', '2':'0.8em', '3':'1em', '4':'1.15em', '5':'1.4em', '6':'1.8em', '7':'2.3em' };
+    return map[String(n)] || '1em';
+  }
 
   function sanitizeStyle(styleText){
     const out = [];
@@ -1050,6 +1086,16 @@
     const allowedTags = { P:1, DIV:1, BR:1, B:1, STRONG:1, I:1, EM:1, U:1, SUP:1, SUB:1, A:1, SPAN:1, OL:1, UL:1, LI:1 };
     const container = document.createElement('div');
     container.innerHTML = html || '';
+
+    // execCommand('fontSize') inserts legacy <font size="n"> tags — convert
+    // those to a real inline font-size before the generic cleanup below,
+    // since <font> itself isn't in the allowed tag set.
+    container.querySelectorAll('font[size]').forEach(f => {
+      const span = document.createElement('span');
+      span.style.fontSize = mapLegacyFontSize(f.getAttribute('size'));
+      while(f.firstChild) span.appendChild(f.firstChild);
+      f.replaceWith(span);
+    });
 
     function clean(node){
       [...node.childNodes].forEach(child => {
@@ -1570,6 +1616,10 @@
   document.getElementById('findReplaceOverlay').addEventListener('click', (e) => {
     if(e.target.id === 'findReplaceOverlay') closeFindReplace();
   });
+
+  wireRichTextField('f-body', 'body-toolbar');
+  wireRichTextField('f-callout', 'callout-toolbar');
+
 
   if(!isAdmin){
     document.getElementById('addBtn').style.display = 'none';
