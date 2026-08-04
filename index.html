@@ -733,49 +733,48 @@
         <option value="published">Published — visible to everyone</option>
       </select>
     </label>
-    <label>Story <span class="hint">(select text, then click a button)</span>
-      <div id="body-toolbar" class="fmt-toolbar">
-        <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
-        <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
-        <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
-        <button type="button" class="fmt-btn" data-cmd="superscript" title="Superscript">x²</button>
-        <button type="button" class="fmt-btn" data-cmd="subscript" title="Subscript">x₂</button>
-        <div class="fmt-sep"></div>
-        <button type="button" class="fmt-btn" data-cmd="justifyLeft" title="Align left">⯇</button>
-        <button type="button" class="fmt-btn" data-cmd="justifyCenter" title="Align center">☰</button>
-        <button type="button" class="fmt-btn" data-cmd="justifyRight" title="Align right">⯈</button>
-        <div class="fmt-sep"></div>
-        <button type="button" class="fmt-btn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
-        <select class="fmt-select" id="f-body-size" title="Font size">
-          <option value="2">Small</option>
-          <option value="3" selected>Normal</option>
-          <option value="4">Medium</option>
-          <option value="5">Large</option>
-          <option value="6">Huge</option>
-        </select>
-        <select class="fmt-select" id="f-body-case" title="Change case">
-          <option value="">Case</option>
-          <option value="upper">UPPERCASE</option>
-          <option value="lower">lowercase</option>
-          <option value="title">Title Case</option>
-        </select>
-        <div class="fmt-sep"></div>
-        <button type="button" class="fmt-btn" data-cmd="removeFormat" title="Clear formatting">Tx</button>
-        <button type="button" class="fmt-btn link-btn" id="f-body-link" title="Insert link">🔗</button>
-        <button type="button" class="fmt-btn" id="f-body-find" title="Find and replace">🔍</button>
-      </div>
-      <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
-    </label>
-    <label>Callout note <span class="hint">(optional)</span>
-      <div id="callout-toolbar" class="fmt-toolbar">
-        <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
-        <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
-        <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
-        <div class="fmt-sep"></div>
-        <button type="button" class="fmt-btn link-btn" id="f-callout-link" title="Insert link">🔗</button>
-      </div>
-      <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
-    </label>
+    <label for="f-body">Story <span class="hint">(select text, then click a button)</span></label>
+    <div id="body-toolbar" class="fmt-toolbar">
+      <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+      <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+      <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+      <button type="button" class="fmt-btn" data-cmd="superscript" title="Superscript">x²</button>
+      <button type="button" class="fmt-btn" data-cmd="subscript" title="Subscript">x₂</button>
+      <div class="fmt-sep"></div>
+      <button type="button" class="fmt-btn" data-cmd="justifyLeft" title="Align left">⯇</button>
+      <button type="button" class="fmt-btn" data-cmd="justifyCenter" title="Align center">☰</button>
+      <button type="button" class="fmt-btn" data-cmd="justifyRight" title="Align right">⯈</button>
+      <div class="fmt-sep"></div>
+      <button type="button" class="fmt-btn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
+      <select class="fmt-select" id="f-body-size" title="Font size">
+        <option value="2">Small</option>
+        <option value="3" selected>Normal</option>
+        <option value="4">Medium</option>
+        <option value="5">Large</option>
+        <option value="6">Huge</option>
+      </select>
+      <select class="fmt-select" id="f-body-case" title="Change case">
+        <option value="">Case</option>
+        <option value="upper">UPPERCASE</option>
+        <option value="lower">lowercase</option>
+        <option value="title">Title Case</option>
+      </select>
+      <div class="fmt-sep"></div>
+      <button type="button" class="fmt-btn" data-cmd="removeFormat" title="Clear formatting">Tx</button>
+      <button type="button" class="fmt-btn link-btn" id="f-body-link" title="Insert link">🔗</button>
+      <button type="button" class="fmt-btn" id="f-body-find" title="Find and replace">🔍</button>
+    </div>
+    <div id="f-body" class="rte" contenteditable="true" data-placeholder="Write what happened..."></div>
+
+    <label for="f-callout" style="margin-top:1rem;">Callout note <span class="hint">(optional)</span></label>
+    <div id="callout-toolbar" class="fmt-toolbar">
+      <button type="button" class="fmt-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+      <button type="button" class="fmt-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+      <button type="button" class="fmt-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+      <div class="fmt-sep"></div>
+      <button type="button" class="fmt-btn link-btn" id="f-callout-link" title="Insert link">🔗</button>
+    </div>
+    <div id="f-callout" class="rte short" contenteditable="true" data-placeholder="A tip or reality check..."></div>
     <div class="editor-actions">
       <button class="action-btn delete-btn" id="deleteBtn" onclick="deleteEntry()">Delete</button>
       <div style="flex:1"></div>
